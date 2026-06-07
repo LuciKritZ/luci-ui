@@ -1,0 +1,115 @@
+{
+  "_credits": "Custom data format: https://github.com/microsoft/vscode-css-languageservice/blob/main/docs/customData.md | Tailwind v4 atDirectives reference: https://gist.github.com/steschwa/5a5b859caa0f96a3ada02b4dca145c44 | Tailwind directives docs: https://tailwindcss.com/docs/functions-and-directives",
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode-css-languageservice/refs/heads/main/docs/customData.schema.json",
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@import",
+      "description": "Inline import CSS files, including Tailwind.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#import-directive"
+        }
+      ]
+    },
+    {
+      "name": "@theme",
+      "description": "Define custom design tokens (fonts, colors, breakpoints).",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#theme-directive"
+        }
+      ]
+    },
+    {
+      "name": "@source",
+      "description": "Specify source files for content detection.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#source-directive"
+        }
+      ]
+    },
+    {
+      "name": "@utility",
+      "description": "Add custom utilities that work with variants.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#utility-directive"
+        }
+      ]
+    },
+    {
+      "name": "@variant",
+      "description": "Apply a Tailwind variant to styles.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#variant-directive"
+        }
+      ]
+    },
+    {
+      "name": "@custom-variant",
+      "description": "Define a custom variant.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#custom-variant-directive"
+        }
+      ]
+    },
+    {
+      "name": "@apply",
+      "description": "Inline utility classes into custom CSS.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#apply-directive"
+        }
+      ]
+    },
+    {
+      "name": "@reference",
+      "description": "Import main stylesheet for reference (e.g. in Vue/Svelte or CSS modules).",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#reference-directive"
+        }
+      ]
+    },
+    {
+      "name": "@config",
+      "description": "Load a legacy JavaScript config file.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#config-directive"
+        }
+      ]
+    },
+    {
+      "name": "@plugin",
+      "description": "Load a legacy JavaScript plugin.",
+      "references": [
+        {
+          "name": "Tailwind docs",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#plugin-directive"
+        }
+      ]
+    },
+    {
+      "name": "@layer",
+      "description": "Define a cascade layer (Tailwind / base / components / utilities)."
+    },
+    {
+      "name": "@screen",
+      "description": "Apply styles at a breakpoint (legacy)."
+    }
+  ]
+}

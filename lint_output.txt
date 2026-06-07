@@ -1,0 +1,19 @@
+
+/home/lucikritz/projects/luci-ui/components/organisms/wizard/steps/theme.step.tsx
+   3:24  error    Expected "CheckIcon" to come before "SparklesIcon"               perfectionist/sort-named-imports
+   7:27  error    Expected "IDesignTheme" to come before "useDesignSystem"         perfectionist/sort-named-imports
+   7:27  warning  'IDesignTheme' is defined but never used                         @typescript-eslint/no-unused-vars
+  28:22  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  32:13  error    Expected "className" to come before "href"                       perfectionist/sort-jsx-props
+  51:11  error    Expected "className" to come before "href"                       perfectionist/sort-jsx-props
+  63:13  error    Expected "className" to come before "onClick"                    perfectionist/sort-jsx-props
+
+/home/lucikritz/projects/luci-ui/models/theme.model.ts
+  107:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/lucikritz/projects/luci-ui/scratch/debug-db.js
+  1:18  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+✖ 9 problems (8 errors, 1 warning)
+  5 errors and 0 warnings potentially fixable with the `--fix` option.
+
