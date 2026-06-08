@@ -1,37 +1,66 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useSettings } from '@/contexts/settings.context';
-import { Artifact, ComponentVariation, Session } from '@/types/index.types';
-import { generateId } from '@/utils/index.utils';
+import { useSettings } from "@/contexts/settings.context";
+import { Artifact, ComponentVariation } from "@/types/index.types";
+import { Project } from "@/types/project.types";
+import { sanitizeHtmlLinks } from "@/utils/html.utils";
+import { generateId } from "@/utils/index.utils";
 
-export function useGenerator() {
+export function useGenerator(
+  projectId?: string,
+  initialArtifacts?: Artifact[],
+  updateProject?: (id: string, updates: Partial<Project>) => Promise<void>
+) {
   const { settings } = useSettings();
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [currentSessionIndex, setCurrentSessionIndex] = useState<number>(-1);
+  const [artifacts, setArtifacts] = useState<Artifact[]>(
+    initialArtifacts || []
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [componentVariations, setComponentVariations] = useState<
     ComponentVariation[]
   >([]);
+
+  const lastSavedRef = useRef<string>("");
+
+  // Sync artifacts to DB when not streaming
+  useEffect(() => {
+    if (!projectId) return;
+    const hasStreaming = artifacts.some(a => a.status === "streaming");
+    if (!hasStreaming) {
+      const currentStr = JSON.stringify(artifacts);
+      if (currentStr === lastSavedRef.current) return;
+      lastSavedRef.current = currentStr;
+
+      if (updateProject) {
+        // We use updateProject which inherently makes a PATCH request and syncs global context.
+        updateProject(projectId, { artifacts }).catch(console.error);
+      }
+    }
+  }, [artifacts, projectId, updateProject]);
+
+  const deleteArtifact = useCallback((artifactId: string) => {
+    setArtifacts(prev => prev.filter(a => a.id !== artifactId));
+  }, []);
 
   const parseJsonStream = async function* (
     responseStream: ReadableStream<Uint8Array>
   ) {
     const reader = responseStream.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
       let braceCount = 0;
-      let start = buffer.indexOf('{');
+      let start = buffer.indexOf("{");
       while (start !== -1) {
         braceCount = 0;
         let end = -1;
         for (let i = start; i < buffer.length; i++) {
-          if (buffer[i] === '{') braceCount++;
-          else if (buffer[i] === '}') braceCount--;
+          if (buffer[i] === "{") braceCount++;
+          else if (buffer[i] === "}") braceCount--;
           if (braceCount === 0 && i > start) {
             end = i;
             break;
@@ -42,9 +71,9 @@ export function useGenerator() {
           try {
             yield JSON.parse(jsonString);
             buffer = buffer.substring(end + 1);
-            start = buffer.indexOf('{');
+            start = buffer.indexOf("{");
           } catch {
-            start = buffer.indexOf('{', start + 1);
+            start = buffer.indexOf("{", start + 1);
           }
         } else {
           break;
@@ -54,30 +83,33 @@ export function useGenerator() {
   };
 
   const generateVariations = useCallback(
-    async (prompt: string, theme: string = 'minimal') => {
+    async (prompt: string, theme: string = "minimal") => {
       setIsLoading(true);
       setComponentVariations([]);
 
       try {
         if (!settings.hasGeminiApiKey)
-          throw new Error('API_KEY is not configured.');
+          throw new Error("API_KEY is not configured.");
 
-        const response = await fetch('/api/generate/variations', {
+        const response = await fetch("/api/generate/variations", {
           body: JSON.stringify({ prompt, theme }),
-          headers: { 'Content-Type': 'application/json' },
-          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
         });
 
         if (!response.ok || !response.body)
-          throw new Error('Failed to generate variations');
+          throw new Error("Failed to generate variations");
 
         for await (const variation of parseJsonStream(response.body)) {
           if (variation.name && variation.html) {
-            setComponentVariations(prev => [...prev, variation]);
+            setComponentVariations(prev => [
+              ...prev,
+              { ...variation, html: sanitizeHtmlLinks(variation.html) },
+            ]);
           }
         }
       } catch (e) {
-        console.error('Error generating variations:', e);
+        console.error("Error generating variations:", e);
       } finally {
         setIsLoading(false);
       }
@@ -85,42 +117,35 @@ export function useGenerator() {
     [settings.hasGeminiApiKey]
   );
 
-  const generateSession = useCallback(
-    async (prompt: string, theme: string = 'minimal') => {
+  const generateArtifacts = useCallback(
+    async (prompt: string, theme: string = "minimal") => {
       if (!prompt.trim() || isLoading) return;
 
       setIsLoading(true);
       const baseTime = Date.now();
-      const sessionId = generateId();
 
       const placeholderArtifacts: Artifact[] = Array(3)
         .fill(null)
-        .map((_, i) => ({
-          html: '',
-          id: `${sessionId}_${i}`,
-          status: 'streaming',
-          styleName: 'Designing...',
+        .map(() => ({
+          html: "",
+          id: generateId(),
+          prompt,
+          status: "streaming",
+          styleName: "Designing...",
+          timestamp: baseTime,
         }));
 
-      const newSession: Session = {
-        artifacts: placeholderArtifacts,
-        id: sessionId,
-        prompt: prompt,
-        timestamp: baseTime,
-      };
-
-      setSessions(prev => [...prev, newSession]);
-      setCurrentSessionIndex(prev => prev + 1);
+      setArtifacts(prev => [...placeholderArtifacts, ...prev]);
 
       try {
         if (!settings.hasGeminiApiKey)
-          throw new Error('API_KEY is not configured.');
+          throw new Error("API_KEY is not configured.");
 
         // Fetch Styles
-        const styleResponse = await fetch('/api/generate/styles', {
+        const styleResponse = await fetch("/api/generate/styles", {
           body: JSON.stringify({ prompt, theme }),
-          headers: { 'Content-Type': 'application/json' },
-          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
         });
 
         let generatedStyles: string[] = [];
@@ -129,28 +154,24 @@ export function useGenerator() {
           if (data.styles) {
             generatedStyles = data.styles;
           }
+        } else {
+          const errText = await styleResponse.text();
+          throw new Error(errText || "Failed to generate styles");
         }
 
         if (!generatedStyles || generatedStyles.length < 3) {
-          generatedStyles = [
-            'Primary Pigment Gridwork',
-            'Tactile Risograph Layering',
-            'Kinetic Silhouette Balance',
-          ];
+          throw new Error("Failed to generate enough styles");
         }
 
         generatedStyles = generatedStyles.slice(0, 3);
 
-        setSessions(prev =>
-          prev.map(s => {
-            if (s.id !== sessionId) return s;
-            return {
-              ...s,
-              artifacts: s.artifacts.map((art, i) => ({
-                ...art,
-                styleName: generatedStyles[i],
-              })),
-            };
+        setArtifacts(prev =>
+          prev.map(art => {
+            const index = placeholderArtifacts.findIndex(p => p.id === art.id);
+            if (index !== -1) {
+              return { ...art, styleName: generatedStyles[index] };
+            }
+            return art;
           })
         );
 
@@ -159,71 +180,69 @@ export function useGenerator() {
           styleInstruction: string
         ) => {
           try {
-            const artifactResponse = await fetch('/api/generate/artifact', {
+            const artifactResponse = await fetch("/api/generate/artifact", {
               body: JSON.stringify({ prompt, styleInstruction, theme }),
-              headers: { 'Content-Type': 'application/json' },
-              method: 'POST',
+              headers: { "Content-Type": "application/json" },
+              method: "POST",
             });
 
             if (!artifactResponse.ok || !artifactResponse.body) {
-              throw new Error('Failed to generate artifact');
+              throw new Error("Failed to generate artifact");
             }
 
             const reader = artifactResponse.body.getReader();
             const decoder = new TextDecoder();
-            let accumulatedHtml = '';
+            let accumulatedHtml = "";
 
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
 
               accumulatedHtml += decoder.decode(value, { stream: true });
-              setSessions(prev =>
-                prev.map(sess =>
-                  sess.id === sessionId
-                    ? {
-                        ...sess,
-                        artifacts: sess.artifacts.map(art =>
-                          art.id === artifact.id
-                            ? { ...art, html: accumulatedHtml }
-                            : art
-                        ),
-                      }
-                    : sess
+              setArtifacts(prev =>
+                prev.map(art =>
+                  art.id === artifact.id
+                    ? { ...art, html: sanitizeHtmlLinks(accumulatedHtml) }
+                    : art
                 )
               );
             }
 
             let finalHtml = accumulatedHtml.trim();
-            if (finalHtml.startsWith('\`\`\`html'))
+            if (finalHtml.startsWith("```html"))
               finalHtml = finalHtml.substring(7).trimStart();
-            if (finalHtml.startsWith('\`\`\`'))
+            if (finalHtml.startsWith("```"))
               finalHtml = finalHtml.substring(3).trimStart();
-            if (finalHtml.endsWith('\`\`\`'))
+            if (finalHtml.endsWith("```"))
               finalHtml = finalHtml
                 .substring(0, finalHtml.length - 3)
                 .trimEnd();
 
-            setSessions(prev =>
-              prev.map(sess =>
-                sess.id === sessionId
+            setArtifacts(prev =>
+              prev.map(art =>
+                art.id === artifact.id
                   ? {
-                      ...sess,
-                      artifacts: sess.artifacts.map(art =>
-                        art.id === artifact.id
-                          ? {
-                              ...art,
-                              html: finalHtml,
-                              status: finalHtml ? 'complete' : 'error',
-                            }
-                          : art
-                      ),
+                      ...art,
+                      html: sanitizeHtmlLinks(finalHtml),
+                      status: finalHtml ? "complete" : "error",
                     }
-                  : sess
+                  : art
               )
             );
-          } catch (e) {
-            console.error('Error generating artifact:', e);
+          } catch (e: unknown) {
+            console.error("Error generating artifact:", e);
+            const error = e as Error;
+            setArtifacts(prev =>
+              prev.map(art =>
+                art.id === artifact.id
+                  ? {
+                      ...art,
+                      html: error.message || "Generation failed",
+                      status: "error",
+                    }
+                  : art
+              )
+            );
           }
         };
 
@@ -233,20 +252,20 @@ export function useGenerator() {
           )
         );
       } catch (e) {
-        console.error('Fatal error in generation process', e);
-        setSessions(prev =>
-          prev.map(sess =>
-            sess.id === sessionId
-              ? {
-                  ...sess,
-                  artifacts: sess.artifacts.map(art => ({
-                    ...art,
-                    status: 'error',
-                    styleName: 'Error: API Key missing or invalid',
-                  })),
-                }
-              : sess
-          )
+        console.error("Fatal error in generation process", e);
+        setArtifacts(prev =>
+          prev.map(art => {
+            const index = placeholderArtifacts.findIndex(p => p.id === art.id);
+            if (index !== -1) {
+              return {
+                ...art,
+                html: e instanceof Error ? e.message : "Unknown error",
+                status: "error",
+                styleName: "Generation Failed",
+              };
+            }
+            return art;
+          })
         );
       } finally {
         setIsLoading(false);
@@ -256,14 +275,13 @@ export function useGenerator() {
   );
 
   return {
+    artifacts,
     componentVariations,
-    currentSessionIndex,
-    generateSession,
+    deleteArtifact,
+    generateArtifacts,
     generateVariations,
     isLoading,
-    sessions,
+    setArtifacts,
     setComponentVariations,
-    setCurrentSessionIndex,
-    setSessions,
   };
 }

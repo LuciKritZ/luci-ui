@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import Theme from '@/models/theme.model';
-import dbConnect from '@/utils/db.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import Theme from "@/models/theme.model";
+import dbConnect from "@/utils/db.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 export async function DELETE(
   request: NextRequest,
@@ -21,16 +21,16 @@ export async function DELETE(
     const theme = await Theme.findOne({ _id: id, userId: session.userId });
 
     if (!theme) {
-      return NextResponse.json({ error: 'Theme not found' }, { status: 404 });
+      return NextResponse.json({ error: "Theme not found" }, { status: 404 });
     }
 
     await Theme.deleteOne({ _id: id });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete theme error:', error);
+    console.error("Delete theme error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

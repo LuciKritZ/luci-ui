@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import ActionDefinition from '@/models/action-definition.model';
-import dbConnect from '@/utils/db.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import ActionDefinition from "@/models/action-definition.model";
+import dbConnect from "@/utils/db.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,9 +16,9 @@ export async function GET(request: NextRequest) {
     const actions = await ActionDefinition.find().sort({ createdAt: -1 });
     return NextResponse.json(actions);
   } catch (error) {
-    console.error('Fetch actions error:', error);
+    console.error("Fetch actions error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
@@ -32,13 +32,24 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { fallbackModel, model, name, prompt } = body;
+    const { fallbackModel, model, name, prompt, responseSchema } = body;
 
     if (!name || !model || !prompt) {
       return NextResponse.json(
-        { error: 'Name, model, and prompt are required' },
+        { error: "Name, model, and prompt are required" },
         { status: 400 }
       );
+    }
+
+    if (responseSchema) {
+      try {
+        JSON.parse(responseSchema);
+      } catch {
+        return NextResponse.json(
+          { error: "responseSchema must be valid JSON" },
+          { status: 400 }
+        );
+      }
     }
 
     await dbConnect();
@@ -47,7 +58,7 @@ export async function POST(request: NextRequest) {
     const existingAction = await ActionDefinition.findOne({ name });
     if (existingAction) {
       return NextResponse.json(
-        { error: 'Action definition with this name already exists' },
+        { error: "Action definition with this name already exists" },
         { status: 400 }
       );
     }
@@ -57,14 +68,15 @@ export async function POST(request: NextRequest) {
       model,
       name,
       prompt,
+      responseSchema,
     });
 
     await newAction.save();
     return NextResponse.json(newAction, { status: 201 });
   } catch (error) {
-    console.error('Create action error:', error);
+    console.error("Create action error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

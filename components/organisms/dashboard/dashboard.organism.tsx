@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
-import { useProject } from '@/contexts/project.context';
+import { useProject } from "@/contexts/project.context";
 
-import { DashboardEmptyState } from './dashboard-empty-state.molecule';
-import { DashboardProjectCard } from './dashboard-project-card.molecule';
+import { DashboardEmptyState } from "./dashboard-empty-state.molecule";
+import { DashboardProjectCard } from "./dashboard-project-card.molecule";
 
 export function Dashboard() {
   const { projects } = useProject();

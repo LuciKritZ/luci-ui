@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   CheckCircle2Icon,
@@ -9,22 +9,22 @@ import {
   Trash2Icon,
   UserIcon,
   XCircleIcon,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from "lucide-react";
+import React, { useState } from "react";
 
-import { Button, Input, Skeleton } from '@/components/atoms/index.atoms';
+import { Button, Input, Skeleton } from "@/components/atoms/index.atoms";
 import {
   ConfirmationDialog,
   EditableInput,
-} from '@/components/molecules/index.molecules';
-import { useSettings } from '@/contexts/settings.context';
+} from "@/components/molecules/index.molecules";
+import { useSettings } from "@/contexts/settings.context";
 
 export function Settings() {
   const { deleteApiKey, isSettingsLoaded, saveApiKey, settings, updateApiKey } =
     useSettings();
-  const [apiKey, setApiKey] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<string>('1');
+  const [apiKey, setApiKey] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<string>("1");
   const [isLoading, setIsLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -38,16 +38,16 @@ export function Settings() {
       const parsedPriority = parseInt(priority) || 1;
       await saveApiKey(
         apiKey,
-        'Gemini',
+        "Gemini",
         parsedPriority,
-        description || 'Gemini API Key'
+        description || "Gemini API Key"
       );
-      setApiKey('');
-      setDescription('');
-      setPriority('1');
+      setApiKey("");
+      setDescription("");
+      setPriority("1");
       setShowAddForm(false);
     } catch (error) {
-      console.error('Failed to save API key:', error);
+      console.error("Failed to save API key:", error);
     } finally {
       setIsLoading(false);
     }
@@ -56,9 +56,9 @@ export function Settings() {
   const handleDelete = async (id: string) => {
     setIsLoading(true);
     try {
-      await deleteApiKey(id, 'Gemini');
+      await deleteApiKey(id, "Gemini");
     } catch (error) {
-      console.error('Failed to delete API key:', error);
+      console.error("Failed to delete API key:", error);
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +129,7 @@ export function Settings() {
                       key={key._id || index}
                     >
                       <div className='flex items-center gap-4'>
-                        {key.status === 'active' ? (
+                        {key.status === "active" ? (
                           <CheckCircle2Icon className='h-5 w-5 text-status-green' />
                         ) : (
                           <XCircleIcon className='h-5 w-5 text-status-red' />
@@ -142,17 +142,17 @@ export function Settings() {
                                 updateApiKey(
                                   key._id as string,
                                   { description: val },
-                                  'Gemini'
+                                  "Gemini"
                                 )
                               }
-                              value={key.meta?.description || 'Gemini API Key'}
+                              value={key.meta?.description || "Gemini API Key"}
                             />
                             <EditableInput
                               onSave={val =>
                                 updateApiKey(
                                   key._id as string,
                                   { priority: parseInt(val) || 1 },
-                                  'Gemini'
+                                  "Gemini"
                                 )
                               }
                               prefix={
@@ -164,11 +164,15 @@ export function Settings() {
                               value={key.priority || 1}
                             />
                           </div>
-                          <p className='text-xs font-mono text-content-tertiary mt-1'>
-                            Added{' '}
-                            {key.createdAt
-                              ? new Date(key.createdAt).toLocaleDateString()
-                              : 'Unknown'}
+                          <p className='text-xs font-mono text-content-tertiary mt-1 flex items-center gap-2'>
+                            <span>
+                              Added{" "}
+                              {key.createdAt
+                                ? new Date(key.createdAt).toLocaleDateString()
+                                : "Unknown"}
+                            </span>
+                            <span className='opacity-50'>•</span>
+                            <span>{key.usageCount || 0} Uses</span>
                           </p>
                         </div>
                       </div>
@@ -281,7 +285,7 @@ export function Settings() {
                   disabled={isLoading || !apiKey}
                   onClick={handleSave}
                 >
-                  {isLoading ? 'Processing...' : 'Save Key'}
+                  {isLoading ? "Processing..." : "Save Key"}
                   {!isLoading && <SaveIcon className='ml-2 h-4 w-4' />}
                 </Button>
               </div>

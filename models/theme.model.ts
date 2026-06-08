@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
-import { clearModelIfLocal } from '@/utils/db.utils';
+import { clearModelIfLocal } from "@/utils/db.utils";
 
 export interface IDesignColors {
   accent: string;
@@ -27,7 +27,7 @@ export interface IDesignColors {
 }
 
 export interface IDesignTheme extends Document {
-  animation: 'bouncy' | 'fluid' | 'minimal' | 'snappy';
+  animation: "bouncy" | "fluid" | "minimal" | "snappy";
   colors: {
     dark: IDesignColors;
     light: IDesignColors;
@@ -38,10 +38,10 @@ export interface IDesignTheme extends Document {
   fontSans: string;
   name: string;
   radius: string;
-  shadows: 'glow' | 'none' | 'sharp' | 'soft';
+  shadows: "glow" | "none" | "sharp" | "soft";
   spacing: {
     base: string;
-    scale: 'comfortable' | 'compact' | 'loose';
+    scale: "comfortable" | "compact" | "loose";
   };
   userId: mongoose.Types.ObjectId;
 }
@@ -76,8 +76,8 @@ const ColorsSchema = new Schema(
 const ThemeSchema = new Schema(
   {
     animation: {
-      default: 'fluid',
-      enum: ['bouncy', 'fluid', 'minimal', 'snappy'],
+      default: "fluid",
+      enum: ["bouncy", "fluid", "minimal", "snappy"],
       type: String,
     },
     colors: {
@@ -85,31 +85,31 @@ const ThemeSchema = new Schema(
       light: { required: true, type: ColorsSchema },
     },
     description: { type: String },
-    fontDisplay: { default: 'Space Grotesk', type: String },
-    fontSans: { default: 'Inter', type: String },
+    fontDisplay: { default: "Space Grotesk", type: String },
+    fontSans: { default: "Inter", type: String },
     name: { required: true, type: String },
-    radius: { default: '0px', type: String },
+    radius: { default: "0px", type: String },
     shadows: {
-      default: 'none',
-      enum: ['glow', 'none', 'sharp', 'soft'],
+      default: "none",
+      enum: ["glow", "none", "sharp", "soft"],
       type: String,
     },
     spacing: {
-      base: { default: '4px', type: String },
+      base: { default: "4px", type: String },
       scale: {
-        default: 'comfortable',
-        enum: ['comfortable', 'compact', 'loose'],
+        default: "comfortable",
+        enum: ["comfortable", "compact", "loose"],
         type: String,
       },
     },
-    userId: { ref: 'User', required: true, type: Schema.Types.ObjectId },
+    userId: { ref: "User", required: true, type: Schema.Types.ObjectId },
   },
   {
     timestamps: true,
   }
 );
 
-ThemeSchema.set('toJSON', {
+ThemeSchema.set("toJSON", {
   transform: (_doc, ret) => {
     const obj = ret as Record<string, unknown>;
     obj.id = (obj._id as { toString: () => string }).toString();
@@ -119,7 +119,7 @@ ThemeSchema.set('toJSON', {
   },
 });
 
-clearModelIfLocal('Theme');
+clearModelIfLocal("Theme");
 
 export default mongoose.models.Theme ||
-  mongoose.model<IDesignTheme>('Theme', ThemeSchema);
+  mongoose.model<IDesignTheme>("Theme", ThemeSchema);

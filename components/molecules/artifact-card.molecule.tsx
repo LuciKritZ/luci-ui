@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
-import { Artifact } from '@/types/index.types';
+import { Artifact } from "@/types/index.types";
 
 interface ArtifactCardProps {
   artifact: Artifact;
@@ -21,11 +21,11 @@ const ArtifactCard = React.memo(
       }
     }, [artifact.html]);
 
-    const isBlurring = artifact.status === 'streaming';
+    const isBlurring = artifact.status === "streaming";
 
     return (
       <div
-        className={`artifact-card ${isFocused ? 'focused' : ''} ${isBlurring ? 'generating' : ''}`}
+        className={`artifact-card ${isFocused ? "focused" : ""} ${isBlurring ? "generating" : ""}`}
         onClick={onClick}
       >
         <div className='artifact-header'>
@@ -54,6 +54,6 @@ const ArtifactCard = React.memo(
   }
 );
 
-ArtifactCard.displayName = 'ArtifactCard';
+ArtifactCard.displayName = "ArtifactCard";
 
 export default ArtifactCard;

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   BriefcaseIcon,
@@ -9,13 +9,13 @@ import {
   PaletteIcon,
   PlusIcon,
   SettingsIcon,
-} from 'lucide-react';
-import { usePathname } from 'next/navigation';
+} from "lucide-react";
+import { usePathname } from "next/navigation";
 
-import { useAuth } from '@/contexts/auth.context';
-import { cn } from '@/utils/index.utils';
+import { useAuth } from "@/contexts/auth.context";
+import { cn } from "@/utils/index.utils";
 
-import { SidebarItem } from './sidebar-item.molecule';
+import { SidebarItem } from "./sidebar-item.molecule";
 
 interface SidebarProps {
   expanded: boolean;
@@ -28,19 +28,19 @@ export function Sidebar({ expanded }: SidebarProps) {
   if (!user) return null;
 
   const getActiveView = () => {
-    if (pathname === '/') return 'dashboard';
+    if (pathname === "/") return "dashboard";
     const views = [
-      'projects',
-      'templates',
-      'themes',
-      'manage',
-      'settings',
-      'new',
+      "projects",
+      "templates",
+      "themes",
+      "manage",
+      "settings",
+      "new",
     ];
     for (const view of views) {
       if (pathname.includes(`/${view}`)) return view;
     }
-    return 'dashboard';
+    return "dashboard";
   };
 
   const activeView = getActiveView();
@@ -49,16 +49,16 @@ export function Sidebar({ expanded }: SidebarProps) {
     <aside
       aria-label='Main navigation'
       className={cn(
-        'relative shrink-0 h-screen bg-surface border-r border-border flex flex-col transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-nav',
-        expanded ? 'w-[240px]' : 'w-[72px]'
+        "relative shrink-0 h-screen bg-surface border-r border-border flex flex-col transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-nav",
+        expanded ? "w-[240px]" : "w-[72px]"
       )}
     >
       {/* Logo container */}
       <div className='py-6 flex flex-col items-center justify-center border-b border-border min-h-[80px] overflow-hidden bg-background'>
         <div
           className={cn(
-            'transition-all duration-300 flex items-center justify-center',
-            expanded ? 'px-6 w-full justify-start gap-4' : 'px-0'
+            "transition-all duration-300 flex items-center justify-center",
+            expanded ? "px-6 w-full justify-start gap-4" : "px-0"
           )}
         >
           <div className='h-8 w-8 shrink-0 rounded-none bg-brand flex items-center justify-center'>
@@ -81,7 +81,7 @@ export function Sidebar({ expanded }: SidebarProps) {
         role='navigation'
       >
         <SidebarItem
-          active={activeView === 'new'}
+          active={activeView === "new"}
           expanded={expanded}
           href='/new'
           icon={<PlusIcon className='h-5 w-5' />}
@@ -89,7 +89,7 @@ export function Sidebar({ expanded }: SidebarProps) {
           label='Create Project'
         />
         <SidebarItem
-          active={activeView === 'dashboard'}
+          active={activeView === "dashboard"}
           expanded={expanded}
           href='/'
           icon={<HomeIcon className='h-5 w-5' />}
@@ -97,7 +97,7 @@ export function Sidebar({ expanded }: SidebarProps) {
           label='Dashboard'
         />
         <SidebarItem
-          active={activeView === 'projects'}
+          active={activeView === "projects"}
           expanded={expanded}
           href='/projects'
           icon={<FolderIcon className='h-5 w-5' />}
@@ -105,7 +105,7 @@ export function Sidebar({ expanded }: SidebarProps) {
           label='Projects'
         />
         <SidebarItem
-          active={activeView === 'templates'}
+          active={activeView === "templates"}
           expanded={expanded}
           href='/templates'
           icon={<LayoutTemplateIcon className='h-5 w-5' />}
@@ -113,7 +113,7 @@ export function Sidebar({ expanded }: SidebarProps) {
           label='Templates'
         />
         <SidebarItem
-          active={activeView === 'themes'}
+          active={activeView === "themes"}
           expanded={expanded}
           href='/themes'
           icon={<PaletteIcon className='h-5 w-5' />}
@@ -121,7 +121,7 @@ export function Sidebar({ expanded }: SidebarProps) {
           label='Themes'
         />
         <SidebarItem
-          active={activeView === 'manage'}
+          active={activeView === "manage"}
           expanded={expanded}
           href='/manage'
           icon={<BriefcaseIcon className='h-5 w-5' />}
@@ -129,7 +129,7 @@ export function Sidebar({ expanded }: SidebarProps) {
           label='Action Definitions'
         />
         <SidebarItem
-          active={activeView === 'settings'}
+          active={activeView === "settings"}
           expanded={expanded}
           href='/settings'
           icon={<SettingsIcon className='h-5 w-5' />}

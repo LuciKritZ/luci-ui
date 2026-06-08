@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { PlusIcon, SearchIcon } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { PlusIcon, SearchIcon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
-import { Skeleton } from '@/components/atoms/index.atoms';
-import { HeaderManager } from '@/components/molecules/header-manager.molecule';
-import { NoThemeSelected } from '@/components/pages/themes/no-theme-selected.themes';
-import { NoThemesFound } from '@/components/pages/themes/no-themes-found.themes';
-import { ThemePreviewCanvas } from '@/components/pages/themes/theme-preview-canvas.themes';
-import { ThemesList } from '@/components/pages/themes/themes-list.themes';
-import { useDesignSystem } from '@/contexts/design.context';
+import { Skeleton } from "@/components/atoms/index.atoms";
+import { HeaderManager } from "@/components/molecules/header-manager.molecule";
+import { NoThemeSelected } from "@/components/pages/themes/no-theme-selected.themes";
+import { NoThemesFound } from "@/components/pages/themes/no-themes-found.themes";
+import { ThemePreviewCanvas } from "@/components/pages/themes/theme-preview-canvas.themes";
+import { ThemesList } from "@/components/pages/themes/themes-list.themes";
+import { useDesignSystem } from "@/contexts/design.context";
 
 export function ThemesView() {
   const {
@@ -22,11 +22,11 @@ export function ThemesView() {
     setSearchQuery,
   } = useDesignSystem();
 
-  const [previewMode] = useState<'dark' | 'light'>('dark');
+  const [previewMode] = useState<"dark" | "light">("dark");
 
   const filteredThemes = savedThemes.filter(theme => {
-    const name = theme?.name?.toLowerCase() || '';
-    const description = theme?.description?.toLowerCase() || '';
+    const name = theme?.name?.toLowerCase() || "";
+    const description = theme?.description?.toLowerCase() || "";
     const query = searchQuery.toLowerCase();
     return name.includes(query) || description.includes(query);
   });

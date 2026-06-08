@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-if (typeof window !== 'undefined') {
-  throw new Error('dbConnect can only be used on the server.');
+if (typeof window !== "undefined") {
+  throw new Error("dbConnect can only be used on the server.");
 }
 
 /**
@@ -29,7 +29,7 @@ if (!cached) {
  * This is essential for Next.js hot reloading to pick up schema changes.
  */
 export function clearModelIfLocal(modelName: string) {
-  if (process.env.ENVIRONMENT === 'local' && mongoose.models[modelName]) {
+  if (process.env.ENVIRONMENT === "local" && mongoose.models[modelName]) {
     delete mongoose.models[modelName];
   }
 }
@@ -39,7 +39,7 @@ async function dbConnect() {
 
   if (!MONGODB_URI) {
     throw new Error(
-      'Please define the MONGODB_URI environment variable inside .env.local'
+      "Please define the MONGODB_URI environment variable inside .env.local"
     );
   }
 

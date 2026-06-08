@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   ActivityIcon,
@@ -21,8 +21,8 @@ import {
   UserIcon,
   UsersIcon,
   ZapIcon,
-} from 'lucide-react';
-import React from 'react';
+} from "lucide-react";
+import React from "react";
 import {
   Area,
   AreaChart,
@@ -42,10 +42,10 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import { toast } from 'sonner';
+} from "recharts";
+import { toast } from "sonner";
 
-import { Badge } from '@/components/atoms/badge.atom';
+import { Badge } from "@/components/atoms/badge.atom";
 import {
   Card,
   CardContent,
@@ -53,7 +53,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/atoms/card.atom';
+} from "@/components/atoms/card.atom";
 import {
   Button,
   Select,
@@ -61,21 +61,21 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/index.atoms';
-import { Input } from '@/components/atoms/input.atom';
-import { Toaster } from '@/components/atoms/sonner.atom';
-import { MultiSelect } from '@/components/molecules/multi-select.molecule';
-import { DataTable } from '@/components/organisms/datatable/datatable.organism';
-import { IDesignTheme } from '@/contexts/design.context';
+} from "@/components/atoms/index.atoms";
+import { Input } from "@/components/atoms/input.atom";
+import { Toaster } from "@/components/atoms/sonner.atom";
+import { MultiSelect } from "@/components/molecules/multi-select.molecule";
+import { DataTable } from "@/components/organisms/datatable/datatable.organism";
+import { IDesignTheme } from "@/contexts/design.context";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface DashboardPreviewProps {
-  initialMode?: 'dark' | 'light';
+  initialMode?: "dark" | "light";
   theme: IDesignTheme | null;
 }
 
-type PreviewTab = 'charts' | 'components' | 'data' | 'outline';
+type PreviewTab = "charts" | "components" | "data" | "outline";
 
 // ─── Color Utilities ──────────────────────────────────────────────────────────
 
@@ -93,13 +93,13 @@ function deriveChartPalette(colors: Record<string, string>): string[] {
 }
 
 function hexToRgb(hex: string): [number, number, number] {
-  const clean = hex.replace('#', '');
+  const clean = hex.replace("#", "");
   const full =
     clean.length === 3
       ? clean
-          .split('')
+          .split("")
           .map(c => c + c)
-          .join('')
+          .join("")
       : clean;
   const int = parseInt(full, 16);
   return [(int >> 16) & 255, (int >> 8) & 255, int & 255];
@@ -114,8 +114,8 @@ function mixHex(a: string, b: string, t: number): string {
       Math.round(ag + (bg - ag) * t),
       Math.round(ab + (bb - ab) * t),
     ]
-      .map(v => v.toString(16).padStart(2, '0'))
-      .join('')}`;
+      .map(v => v.toString(16).padStart(2, "0"))
+      .join("")}`;
   } catch {
     return a;
   }
@@ -124,112 +124,112 @@ function mixHex(a: string, b: string, t: number): string {
 // ─── Default Tokens ───────────────────────────────────────────────────────────
 
 const defaultDark = {
-  accent: '#3b82f6',
-  background: '#09090b',
-  border: '#27272a',
-  card: '#09090b',
-  cardForeground: '#fafafa',
-  content: '#fafafa',
-  destructive: '#ef4444',
-  destructiveForeground: '#fafafa',
-  input: '#27272a',
-  muted: '#27272a',
-  mutedForeground: '#a1a1aa',
-  popover: '#09090b',
-  popoverForeground: '#fafafa',
-  primary: '#fafafa',
-  primaryForeground: '#18181b',
-  ring: '#d4d4d8',
-  secondary: '#27272a',
-  secondaryForeground: '#fafafa',
-  sidebarActive: '#27272a',
-  sidebarActiveForeground: '#fafafa',
-  surface: '#18181b',
+  accent: "#3b82f6",
+  background: "#09090b",
+  border: "#27272a",
+  card: "#09090b",
+  cardForeground: "#fafafa",
+  content: "#fafafa",
+  destructive: "#ef4444",
+  destructiveForeground: "#fafafa",
+  input: "#27272a",
+  muted: "#27272a",
+  mutedForeground: "#a1a1aa",
+  popover: "#09090b",
+  popoverForeground: "#fafafa",
+  primary: "#fafafa",
+  primaryForeground: "#18181b",
+  ring: "#d4d4d8",
+  secondary: "#27272a",
+  secondaryForeground: "#fafafa",
+  sidebarActive: "#27272a",
+  sidebarActiveForeground: "#fafafa",
+  surface: "#18181b",
 };
 
 const defaultLight = {
-  accent: '#3b82f6',
-  background: '#ffffff',
-  border: '#e4e4e7',
-  card: '#ffffff',
-  cardForeground: '#09090b',
-  content: '#09090b',
-  destructive: '#ef4444',
-  destructiveForeground: '#fafafa',
-  input: '#e4e4e7',
-  muted: '#f4f4f5',
-  mutedForeground: '#71717a',
-  popover: '#ffffff',
-  popoverForeground: '#09090b',
-  primary: '#18181b',
-  primaryForeground: '#fafafa',
-  ring: '#a1a1aa',
-  secondary: '#f4f4f5',
-  secondaryForeground: '#18181b',
-  sidebarActive: '#e4e4e7',
-  sidebarActiveForeground: '#09090b',
-  surface: '#f9fafb',
+  accent: "#3b82f6",
+  background: "#ffffff",
+  border: "#e4e4e7",
+  card: "#ffffff",
+  cardForeground: "#09090b",
+  content: "#09090b",
+  destructive: "#ef4444",
+  destructiveForeground: "#fafafa",
+  input: "#e4e4e7",
+  muted: "#f4f4f5",
+  mutedForeground: "#71717a",
+  popover: "#ffffff",
+  popoverForeground: "#09090b",
+  primary: "#18181b",
+  primaryForeground: "#fafafa",
+  ring: "#a1a1aa",
+  secondary: "#f4f4f5",
+  secondaryForeground: "#18181b",
+  sidebarActive: "#e4e4e7",
+  sidebarActiveForeground: "#09090b",
+  surface: "#f9fafb",
 };
 
 // ─── Static Chart Data ────────────────────────────────────────────────────────
 
 const areaData = [
-  { month: 'Jan', revenue: 4200, users: 2400 },
-  { month: 'Feb', revenue: 5800, users: 3100 },
-  { month: 'Mar', revenue: 4900, users: 2800 },
-  { month: 'Apr', revenue: 7200, users: 4200 },
-  { month: 'May', revenue: 6100, users: 3800 },
-  { month: 'Jun', revenue: 8900, users: 5100 },
-  { month: 'Jul', revenue: 7600, users: 4600 },
-  { month: 'Aug', revenue: 9400, users: 5800 },
+  { month: "Jan", revenue: 4200, users: 2400 },
+  { month: "Feb", revenue: 5800, users: 3100 },
+  { month: "Mar", revenue: 4900, users: 2800 },
+  { month: "Apr", revenue: 7200, users: 4200 },
+  { month: "May", revenue: 6100, users: 3800 },
+  { month: "Jun", revenue: 8900, users: 5100 },
+  { month: "Jul", revenue: 7600, users: 4600 },
+  { month: "Aug", revenue: 9400, users: 5800 },
 ];
 const barData = [
-  { name: 'Mon', value: 320 },
-  { name: 'Tue', value: 480 },
-  { name: 'Wed', value: 290 },
-  { name: 'Thu', value: 610 },
-  { name: 'Fri', value: 520 },
-  { name: 'Sat', value: 180 },
-  { name: 'Sun', value: 240 },
+  { name: "Mon", value: 320 },
+  { name: "Tue", value: 480 },
+  { name: "Wed", value: 290 },
+  { name: "Thu", value: 610 },
+  { name: "Fri", value: 520 },
+  { name: "Sat", value: 180 },
+  { name: "Sun", value: 240 },
 ];
 const lineData = [
-  { a: 40, b: 24, week: 'W1' },
-  { a: 55, b: 38, week: 'W2' },
-  { a: 47, b: 42, week: 'W3' },
-  { a: 70, b: 55, week: 'W4' },
-  { a: 63, b: 61, week: 'W5' },
-  { a: 85, b: 70, week: 'W6' },
+  { a: 40, b: 24, week: "W1" },
+  { a: 55, b: 38, week: "W2" },
+  { a: 47, b: 42, week: "W3" },
+  { a: 70, b: 55, week: "W4" },
+  { a: 63, b: 61, week: "W5" },
+  { a: 85, b: 70, week: "W6" },
 ];
 const pieData = [
-  { name: 'Organic', value: 38 },
-  { name: 'Paid', value: 27 },
-  { name: 'Referral', value: 20 },
-  { name: 'Direct', value: 15 },
+  { name: "Organic", value: 38 },
+  { name: "Paid", value: 27 },
+  { name: "Referral", value: 20 },
+  { name: "Direct", value: 15 },
 ];
 const radarData = [
-  { A: 85, subject: 'Design' },
-  { A: 92, subject: 'Dev' },
-  { A: 68, subject: 'Marketing' },
-  { A: 74, subject: 'Sales' },
-  { A: 88, subject: 'Support' },
-  { A: 79, subject: 'Analytics' },
+  { A: 85, subject: "Design" },
+  { A: 92, subject: "Dev" },
+  { A: 68, subject: "Marketing" },
+  { A: 74, subject: "Sales" },
+  { A: 88, subject: "Support" },
+  { A: 79, subject: "Analytics" },
 ];
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function DashboardPreview({
-  initialMode = 'dark',
+  initialMode = "dark",
   theme,
 }: DashboardPreviewProps) {
   const [localMode, setLocalMode] = React.useState(initialMode);
-  const [activeTab, setActiveTab] = React.useState<PreviewTab>('outline');
+  const [activeTab, setActiveTab] = React.useState<PreviewTab>("outline");
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     setLocalMode(initialMode);
   }, [initialMode]);
 
-  const isDark = localMode === 'dark';
+  const isDark = localMode === "dark";
   const baseThemeColors = theme?.colors?.dark || theme?.colors?.light;
   const colors = theme?.colors?.[localMode] || {
     ...(isDark ? defaultDark : defaultLight),
@@ -243,7 +243,7 @@ export function DashboardPreview({
 
   const chartPalette = deriveChartPalette(colors);
 
-  const baseSpacing = parseInt(theme?.spacing?.base || '4px');
+  const baseSpacing = parseInt(theme?.spacing?.base || "4px");
   const sp = {
     lg: `${baseSpacing * 6}px`,
     md: `${baseSpacing * 4}px`,
@@ -253,87 +253,87 @@ export function DashboardPreview({
   };
 
   const style = {
-    '--accent': colors.accent,
-    '--accent-foreground': colors.primaryForeground,
-    '--background': colors.background,
-    '--border': colors.border,
-    '--card': colors.card,
-    '--card-foreground': colors.cardForeground,
+    "--accent": colors.accent,
+    "--accent-foreground": colors.primaryForeground,
+    "--background": colors.background,
+    "--border": colors.border,
+    "--card": colors.card,
+    "--card-foreground": colors.cardForeground,
     // Tailwind v4 --color-* mappings for standard utility classes
-    '--color-accent': colors.accent,
-    '--color-accent-foreground': colors.primaryForeground,
-    '--color-background': colors.background,
-    '--color-border': colors.border,
-    '--color-card': colors.card,
-    '--color-card-foreground': colors.cardForeground,
-    '--color-destructive': colors.destructive,
-    '--color-destructive-foreground': colors.destructiveForeground,
-    '--color-foreground': colors.content,
-    '--color-input': colors.input,
-    '--color-muted': colors.muted,
-    '--color-muted-foreground': colors.mutedForeground,
-    '--color-popover': colors.popover,
-    '--color-popover-foreground': colors.popoverForeground,
-    '--color-primary': colors.primary,
-    '--color-primary-foreground': colors.primaryForeground,
-    '--color-ring': colors.ring,
-    '--color-secondary': colors.secondary,
-    '--color-secondary-foreground': colors.secondaryForeground,
-    '--destructive': colors.destructive,
-    '--destructive-foreground': colors.destructiveForeground,
-    '--foreground': colors.content,
-    '--input': colors.input,
-    '--muted': colors.muted,
-    '--muted-foreground': colors.mutedForeground,
-    '--popover': colors.popover,
-    '--popover-foreground': colors.popoverForeground,
-    '--preview-accent': colors.accent,
-    '--preview-bg': colors.background,
-    '--preview-border': colors.border,
-    '--preview-card': colors.card,
-    '--preview-card-foreground': colors.cardForeground,
-    '--preview-content': colors.content,
-    '--preview-destructive': colors.destructive,
-    '--preview-destructive-foreground': colors.destructiveForeground,
-    '--preview-font-display': theme?.fontDisplay || 'Space Grotesk',
-    '--preview-font-sans': theme?.fontSans || 'Inter',
-    '--preview-input': colors.input,
-    '--preview-muted': colors.muted,
-    '--preview-muted-foreground': colors.mutedForeground,
-    '--preview-popover': colors.popover,
-    '--preview-popover-foreground': colors.popoverForeground,
-    '--preview-primary': colors.primary,
+    "--color-accent": colors.accent,
+    "--color-accent-foreground": colors.primaryForeground,
+    "--color-background": colors.background,
+    "--color-border": colors.border,
+    "--color-card": colors.card,
+    "--color-card-foreground": colors.cardForeground,
+    "--color-destructive": colors.destructive,
+    "--color-destructive-foreground": colors.destructiveForeground,
+    "--color-foreground": colors.content,
+    "--color-input": colors.input,
+    "--color-muted": colors.muted,
+    "--color-muted-foreground": colors.mutedForeground,
+    "--color-popover": colors.popover,
+    "--color-popover-foreground": colors.popoverForeground,
+    "--color-primary": colors.primary,
+    "--color-primary-foreground": colors.primaryForeground,
+    "--color-ring": colors.ring,
+    "--color-secondary": colors.secondary,
+    "--color-secondary-foreground": colors.secondaryForeground,
+    "--destructive": colors.destructive,
+    "--destructive-foreground": colors.destructiveForeground,
+    "--foreground": colors.content,
+    "--input": colors.input,
+    "--muted": colors.muted,
+    "--muted-foreground": colors.mutedForeground,
+    "--popover": colors.popover,
+    "--popover-foreground": colors.popoverForeground,
+    "--preview-accent": colors.accent,
+    "--preview-bg": colors.background,
+    "--preview-border": colors.border,
+    "--preview-card": colors.card,
+    "--preview-card-foreground": colors.cardForeground,
+    "--preview-content": colors.content,
+    "--preview-destructive": colors.destructive,
+    "--preview-destructive-foreground": colors.destructiveForeground,
+    "--preview-font-display": theme?.fontDisplay || "Space Grotesk",
+    "--preview-font-sans": theme?.fontSans || "Inter",
+    "--preview-input": colors.input,
+    "--preview-muted": colors.muted,
+    "--preview-muted-foreground": colors.mutedForeground,
+    "--preview-popover": colors.popover,
+    "--preview-popover-foreground": colors.popoverForeground,
+    "--preview-primary": colors.primary,
 
-    '--preview-primary-foreground': colors.primaryForeground,
-    '--preview-radius': theme?.radius || '0px',
-    '--preview-ring': colors.ring,
-    '--preview-secondary': colors.secondary,
-    '--preview-secondary-foreground': colors.secondaryForeground,
-    '--preview-sidebar-active': colors.sidebarActive,
-    '--preview-sidebar-active-foreground': colors.sidebarActiveForeground,
-    '--preview-space-lg': sp.lg,
-    '--preview-space-md': sp.md,
-    '--preview-space-sm': sp.sm,
-    '--preview-space-xl': sp.xl,
-    '--preview-space-xs': sp.xs,
-    '--preview-surface': colors.surface,
+    "--preview-primary-foreground": colors.primaryForeground,
+    "--preview-radius": theme?.radius || "0px",
+    "--preview-ring": colors.ring,
+    "--preview-secondary": colors.secondary,
+    "--preview-secondary-foreground": colors.secondaryForeground,
+    "--preview-sidebar-active": colors.sidebarActive,
+    "--preview-sidebar-active-foreground": colors.sidebarActiveForeground,
+    "--preview-space-lg": sp.lg,
+    "--preview-space-md": sp.md,
+    "--preview-space-sm": sp.sm,
+    "--preview-space-xl": sp.xl,
+    "--preview-space-xs": sp.xs,
+    "--preview-surface": colors.surface,
     // Shadcn passthrough
-    '--primary': colors.primary,
-    '--primary-foreground': colors.primaryForeground,
-    '--radius': theme?.radius || '0px',
-    '--ring': colors.ring,
-    '--secondary': colors.secondary,
-    '--secondary-foreground': colors.secondaryForeground,
+    "--primary": colors.primary,
+    "--primary-foreground": colors.primaryForeground,
+    "--radius": theme?.radius || "0px",
+    "--ring": colors.ring,
+    "--secondary": colors.secondary,
+    "--secondary-foreground": colors.secondaryForeground,
 
-    transition: theme?.animation === 'minimal' ? 'none' : 'all 0.5s ease',
+    transition: theme?.animation === "minimal" ? "none" : "all 0.5s ease",
   } as React.CSSProperties;
 
   const fontsToLoad = Array.from(
-    new Set([theme?.fontDisplay || 'Space Grotesk', theme?.fontSans || 'Inter'])
+    new Set([theme?.fontDisplay || "Space Grotesk", theme?.fontSans || "Inter"])
   );
   const fontsQuery = fontsToLoad
-    .map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;900`)
-    .join('&');
+    .map(f => `family=${f.replace(/ /g, "+")}:wght@400;500;600;700;900`)
+    .join("&");
 
   return (
     <>
@@ -418,7 +418,7 @@ export function DashboardPreview({
               </span>
               <button
                 className='w-7 h-7 flex items-center justify-center rounded-(--preview-radius) hover:bg-(--preview-muted) transition-colors text-(--preview-muted-foreground) hover:text-(--preview-content)'
-                onClick={() => setLocalMode(isDark ? 'light' : 'dark')}
+                onClick={() => setLocalMode(isDark ? "light" : "dark")}
               >
                 {isDark ? (
                   <SunIcon className='w-4 h-4' />
@@ -465,13 +465,13 @@ export function DashboardPreview({
             {/* Tab Bar */}
             <div className='flex gap-0 border-b border-(--preview-border) mb-(--preview-space-xl)'>
               {(
-                ['outline', 'components', 'charts', 'data'] as PreviewTab[]
+                ["outline", "components", "charts", "data"] as PreviewTab[]
               ).map(tab => (
                 <button
                   className={`text-[10px] font-bold py-2 px-3 uppercase tracking-widest border-b-2 -mb-px transition-colors ${
                     activeTab === tab
-                      ? 'border-(--preview-primary) text-(--preview-content)'
-                      : 'border-transparent text-(--preview-muted-foreground) hover:text-(--preview-content)'
+                      ? "border-(--preview-primary) text-(--preview-content)"
+                      : "border-transparent text-(--preview-muted-foreground) hover:text-(--preview-content)"
                   }`}
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -481,12 +481,12 @@ export function DashboardPreview({
               ))}
             </div>
 
-            {activeTab === 'outline' && <OutlineTab />}
-            {activeTab === 'components' && <ComponentsTab />}
-            {activeTab === 'charts' && (
+            {activeTab === "outline" && <OutlineTab />}
+            {activeTab === "components" && <ComponentsTab />}
+            {activeTab === "charts" && (
               <ChartsTab colors={colors} palette={chartPalette} />
             )}
-            {activeTab === 'data' && <DataTab />}
+            {activeTab === "data" && <DataTab />}
           </div>
         </main>
 
@@ -546,7 +546,7 @@ export function DashboardPreview({
             border-color: var(--preview-primary);
           }
           .preview-checkbox:checked::after {
-            content: '';
+            content: "";
             position: absolute;
             left: 3px;
             top: 1px;
@@ -627,10 +627,10 @@ function ChartsTab({
   const tooltipStyle = {
     backgroundColor: colors.popover,
     border: `1px solid ${colors.border}`,
-    borderRadius: '6px',
+    borderRadius: "6px",
     color: colors.content,
-    fontSize: '10px',
-    padding: '6px 10px',
+    fontSize: "10px",
+    padding: "6px 10px",
   };
 
   return (
@@ -689,8 +689,8 @@ function ChartsTab({
           </ResponsiveContainer>
           <ChartLegend
             items={[
-              { color: palette[0], label: 'Revenue' },
-              { color: palette[1], label: 'Users' },
+              { color: palette[0], label: "Revenue" },
+              { color: palette[1], label: "Users" },
             ]}
           />
         </ChartCard>
@@ -776,8 +776,8 @@ function ChartsTab({
           </ResponsiveContainer>
           <ChartLegend
             items={[
-              { color: palette[0], label: 'Variant A' },
-              { color: palette[1], label: 'Variant B' },
+              { color: palette[0], label: "Variant A" },
+              { color: palette[1], label: "Variant B" },
             ]}
           />
         </ChartCard>
@@ -855,27 +855,27 @@ function ChartsTab({
         {[
           {
             data: [20, 35, 28, 45, 38, 52, 48, 61],
-            delta: '+0.4%',
-            label: 'Conversion',
-            value: '3.24%',
+            delta: "+0.4%",
+            label: "Conversion",
+            value: "3.24%",
           },
           {
             data: [55, 42, 60, 38, 65, 50, 70, 58],
-            delta: '+18s',
-            label: 'Avg. Session',
-            value: '4m 12s',
+            delta: "+18s",
+            label: "Avg. Session",
+            value: "4m 12s",
           },
           {
             data: [60, 55, 58, 50, 48, 45, 42, 40],
-            delta: '-2.1%',
-            label: 'Bounce Rate',
-            value: '42.1%',
+            delta: "-2.1%",
+            label: "Bounce Rate",
+            value: "42.1%",
           },
           {
             data: [30, 38, 35, 45, 40, 52, 48, 58],
-            delta: '+0.7',
-            label: 'Pages/Visit',
-            value: '5.8',
+            delta: "+0.7",
+            label: "Pages/Visit",
+            value: "5.8",
           },
         ].map((item, idx) => (
           <SparkCard
@@ -897,56 +897,56 @@ function CommandMenu({ onClose }: { onClose: () => void }) {
       items: [
         {
           icon: <LayoutDashboardIcon className='w-3 h-3' />,
-          label: 'Dashboard',
-          shortcut: '⌘D',
+          label: "Dashboard",
+          shortcut: "⌘D",
         },
         {
           icon: <BarChart3Icon className='w-3 h-3' />,
-          label: 'Analytics',
-          shortcut: '⌘A',
+          label: "Analytics",
+          shortcut: "⌘A",
         },
         {
           icon: <FolderIcon className='w-3 h-3' />,
-          label: 'Projects',
-          shortcut: '⌘P',
+          label: "Projects",
+          shortcut: "⌘P",
         },
       ],
-      label: 'Navigation',
+      label: "Navigation",
     },
     {
       items: [
         {
           icon: <FileTextIcon className='w-3 h-3' />,
-          label: 'New Document',
-          shortcut: '⌘N',
+          label: "New Document",
+          shortcut: "⌘N",
         },
         {
           icon: <GitBranchIcon className='w-3 h-3' />,
-          label: 'View on GitHub',
+          label: "View on GitHub",
           shortcut: null,
         },
         {
           icon: <BellIcon className='w-3 h-3' />,
-          label: 'Notifications',
+          label: "Notifications",
           shortcut: null,
         },
       ],
-      label: 'Actions',
+      label: "Actions",
     },
     {
       items: [
         {
           icon: <HelpCircleIcon className='w-3 h-3' />,
-          label: 'Help & Support',
+          label: "Help & Support",
           shortcut: null,
         },
         {
           icon: <LogOutIcon className='w-3 h-3' />,
-          label: 'Sign Out',
+          label: "Sign Out",
           shortcut: null,
         },
       ],
-      label: 'Account',
+      label: "Account",
     },
   ];
 
@@ -1000,7 +1000,7 @@ function CommandMenu({ onClose }: { onClose: () => void }) {
 // ─── Outline Tab ──────────────────────────────────────────────────────────────
 
 function ComponentsTab() {
-  const [selectVal, setSelectVal] = React.useState('option1');
+  const [selectVal, setSelectVal] = React.useState("option1");
   const [multiChecks, setMultiChecks] = React.useState({
     digest: true,
     notifs: true,
@@ -1098,13 +1098,13 @@ function ComponentsTab() {
           className='bg-(--preview-input) border-(--preview-border) text-(--preview-content)'
           onChange={() => {}}
           options={[
-            { label: 'React', value: 'react' },
-            { label: 'Next.js', value: 'next' },
-            { label: 'Tailwind CSS', value: 'tailwind' },
-            { label: 'Shadcn UI', value: 'shadcn' },
-            { label: 'TypeScript', value: 'ts' },
+            { label: "React", value: "react" },
+            { label: "Next.js", value: "next" },
+            { label: "Tailwind CSS", value: "tailwind" },
+            { label: "Shadcn UI", value: "shadcn" },
+            { label: "TypeScript", value: "ts" },
           ]}
-          selected={['react', 'tailwind']}
+          selected={["react", "tailwind"]}
         />
       </Section>
 
@@ -1112,9 +1112,9 @@ function ComponentsTab() {
       <Section title='Checkboxes & Toggles'>
         <div className='grid grid-cols-2 gap-x-6 gap-y-2'>
           {[
-            { key: 'notifs', label: 'Email notifications' },
-            { key: 'updates', label: 'Product updates' },
-            { key: 'digest', label: 'Weekly digest' },
+            { key: "notifs", label: "Email notifications" },
+            { key: "updates", label: "Product updates" },
+            { key: "digest", label: "Weekly digest" },
           ].map(item => (
             <label
               className='flex items-center gap-2.5 cursor-pointer group'
@@ -1137,7 +1137,7 @@ function ComponentsTab() {
             </label>
           ))}
           {/* Radio group */}
-          {['Free', 'Pro', 'Enterprise'].map(plan => (
+          {["Free", "Pro", "Enterprise"].map(plan => (
             <label
               className='flex items-center gap-2.5 cursor-pointer'
               key={plan}
@@ -1145,7 +1145,7 @@ function ComponentsTab() {
               <input
                 className='preview-checkbox'
                 name='plan'
-                style={{ borderRadius: '50%' }}
+                style={{ borderRadius: "50%" }}
                 type='radio'
               />
               <span className='text-[10px] text-(--preview-content)'>
@@ -1187,7 +1187,7 @@ function ComponentsTab() {
             </p>
             <Button
               className='text-xs h-7'
-              onClick={() => toast.success('Changes saved successfully')}
+              onClick={() => toast.success("Changes saved successfully")}
               size='sm'
               variant='outline'
             >
@@ -1196,8 +1196,8 @@ function ComponentsTab() {
             <Button
               className='text-xs h-7'
               onClick={() =>
-                toast.error('Something went wrong', {
-                  description: 'Please try again.',
+                toast.error("Something went wrong", {
+                  description: "Please try again.",
                 })
               }
               size='sm'
@@ -1234,11 +1234,11 @@ function ComponentsTab() {
       <Section title='Progress & Status'>
         <div className='space-y-2'>
           {[
-            { color: 'var(--preview-primary)', label: 'Storage', value: 72 },
-            { color: 'var(--preview-accent)', label: 'Bandwidth', value: 45 },
+            { color: "var(--preview-primary)", label: "Storage", value: 72 },
+            { color: "var(--preview-accent)", label: "Bandwidth", value: 45 },
             {
-              color: 'var(--preview-destructive)',
-              label: 'API Usage',
+              color: "var(--preview-destructive)",
+              label: "API Usage",
               value: 91,
             },
           ].map(item => (
@@ -1272,39 +1272,39 @@ function DataTab() {
   const [loading] = React.useState(false);
   const [data] = React.useState([
     {
-      email: 'john@example.com',
-      id: '1',
-      name: 'John Doe',
-      role: 'Admin',
-      status: 'Active',
+      email: "john@example.com",
+      id: "1",
+      name: "John Doe",
+      role: "Admin",
+      status: "Active",
     },
     {
-      email: 'jane@example.com',
-      id: '2',
-      name: 'Jane Smith',
-      role: 'Editor',
-      status: 'Active',
+      email: "jane@example.com",
+      id: "2",
+      name: "Jane Smith",
+      role: "Editor",
+      status: "Active",
     },
     {
-      email: 'bob@example.com',
-      id: '3',
-      name: 'Bob Johnson',
-      role: 'Viewer',
-      status: 'Inactive',
+      email: "bob@example.com",
+      id: "3",
+      name: "Bob Johnson",
+      role: "Viewer",
+      status: "Inactive",
     },
     {
-      email: 'alice@example.com',
-      id: '4',
-      name: 'Alice Williams',
-      role: 'Editor',
-      status: 'Active',
+      email: "alice@example.com",
+      id: "4",
+      name: "Alice Williams",
+      role: "Editor",
+      status: "Active",
     },
     {
-      email: 'charlie@example.com',
-      id: '5',
-      name: 'Charlie Brown',
-      role: 'Viewer',
-      status: 'Pending',
+      email: "charlie@example.com",
+      id: "5",
+      name: "Charlie Brown",
+      role: "Viewer",
+      status: "Pending",
     },
   ]);
 
@@ -1317,34 +1317,34 @@ function DataTab() {
   };
 
   const columns = [
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'email', header: 'Email' },
+    { accessorKey: "name", header: "Name" },
+    { accessorKey: "email", header: "Email" },
     {
-      accessorKey: 'role',
+      accessorKey: "role",
       cell: ({ row }: { row: { original: RowData } }) => (
         <Badge variant='outline'>{row.original.role}</Badge>
       ),
-      header: 'Role',
+      header: "Role",
     },
     {
-      accessorKey: 'status',
+      accessorKey: "status",
       cell: ({ row }: { row: { original: RowData } }) => {
         const s = row.original.status;
         return (
           <Badge
             variant={
-              s === 'Active'
-                ? 'default'
-                : s === 'Inactive'
-                  ? 'destructive'
-                  : 'secondary'
+              s === "Active"
+                ? "default"
+                : s === "Inactive"
+                  ? "destructive"
+                  : "secondary"
             }
           >
             {s}
           </Badge>
         );
       },
-      header: 'Status',
+      header: "Status",
     },
   ];
 
@@ -1369,11 +1369,11 @@ function DataTab() {
                 <Badge
                   className='shrink-0 text-[10px] px-1.5 py-0'
                   variant={
-                    item.status === 'Active'
-                      ? 'default'
-                      : item.status === 'Inactive'
-                        ? 'destructive'
-                        : 'secondary'
+                    item.status === "Active"
+                      ? "default"
+                      : item.status === "Inactive"
+                        ? "destructive"
+                        : "secondary"
                   }
                 >
                   {item.status}
@@ -1410,8 +1410,8 @@ function NavItem({
     <div
       className={`flex items-center gap-3 px-3 py-2 rounded-(--preview-radius) text-[10px] transition-colors cursor-pointer ${
         active
-          ? 'bg-(--preview-sidebar-active) text-(--preview-sidebar-active-foreground)'
-          : 'text-(--preview-muted-foreground) hover:bg-(--preview-secondary)/50 hover:text-(--preview-content)'
+          ? "bg-(--preview-sidebar-active) text-(--preview-sidebar-active-foreground)"
+          : "text-(--preview-muted-foreground) hover:bg-(--preview-secondary)/50 hover:text-(--preview-content)"
       }`}
     >
       {icon}
@@ -1425,11 +1425,11 @@ function NavItem({
 function OutlineTab() {
   const [checked, setChecked] = React.useState<Record<string, boolean>>({});
   const rows = [
-    { label: 'Project Header', status: 'In Process', type: 'SECTION' },
-    { label: 'Cover page design', status: 'Done', type: 'COVER' },
-    { label: 'Executive summary draft', status: 'Done', type: 'NARRATIVE' },
-    { label: 'Financial projections', status: 'In Process', type: 'DATA' },
-    { label: 'Market analysis', status: 'Pending', type: 'SECTION' },
+    { label: "Project Header", status: "In Process", type: "SECTION" },
+    { label: "Cover page design", status: "Done", type: "COVER" },
+    { label: "Executive summary draft", status: "Done", type: "NARRATIVE" },
+    { label: "Financial projections", status: "In Process", type: "DATA" },
+    { label: "Market analysis", status: "Pending", type: "SECTION" },
   ];
 
   return (
@@ -1449,7 +1449,7 @@ function OutlineTab() {
               type='checkbox'
             />
             <span
-              className={`text-[10px] font-medium transition-colors ${checked[row.label] ? 'line-through text-(--preview-muted-foreground)' : 'text-(--preview-content)'}`}
+              className={`text-[10px] font-medium transition-colors ${checked[row.label] ? "line-through text-(--preview-muted-foreground)" : "text-(--preview-content)"}`}
             >
               {row.label}
             </span>
@@ -1460,11 +1460,11 @@ function OutlineTab() {
             </span>
             <span
               className={`text-[8px] px-2 py-0.5 rounded-full border font-medium ${
-                row.status === 'Done'
-                  ? 'border-green-500/30 text-green-500 bg-green-500/5'
-                  : row.status === 'Pending'
-                    ? 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5'
-                    : 'border-orange-500/30 text-orange-500 bg-orange-500/5'
+                row.status === "Done"
+                  ? "border-green-500/30 text-green-500 bg-green-500/5"
+                  : row.status === "Pending"
+                    ? "border-yellow-500/30 text-yellow-500 bg-yellow-500/5"
+                    : "border-orange-500/30 text-orange-500 bg-orange-500/5"
               }`}
             >
               {row.status}
@@ -1516,7 +1516,7 @@ function SparkCard({
       (d, i) =>
         `${(i / (data.length - 1)) * w},${h - ((d - min) / (max - min || 1)) * h}`
     )
-    .join(' ');
+    .join(" ");
   return (
     <div className='p-3 rounded-(--preview-radius) border border-(--preview-border) bg-(--preview-card)/60'>
       <p className='text-[8px] text-(--preview-muted-foreground) uppercase font-bold tracking-tight mb-1'>
@@ -1527,7 +1527,7 @@ function SparkCard({
       </p>
       <div className='flex items-end justify-between mt-1'>
         <span
-          className={`text-[8px] font-bold ${delta.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}
+          className={`text-[8px] font-bold ${delta.startsWith("+") ? "text-green-500" : "text-red-500"}`}
         >
           {delta}
         </span>
@@ -1564,7 +1564,7 @@ function StatCard({
   trend: string;
   value: string;
 }) {
-  const isPositive = trend.startsWith('+');
+  const isPositive = trend.startsWith("+");
   return (
     <div className='p-4 rounded-(--preview-radius) border border-(--preview-border) bg-(--preview-card)'>
       <div className='flex justify-between items-center mb-2'>
@@ -1575,7 +1575,7 @@ function StatCard({
           </span>
         </div>
         <span
-          className={`text-[8px] px-1 py-0.5 rounded-sm font-bold ${isPositive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}
+          className={`text-[8px] px-1 py-0.5 rounded-sm font-bold ${isPositive ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}
         >
           {trend}
         </span>

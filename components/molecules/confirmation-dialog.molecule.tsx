@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   AlertDialog,
@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/atoms/index.atoms';
+} from "@/components/atoms/index.atoms";
 
 export interface ConfirmationDialogProps {
   cancelText?: string;
@@ -23,8 +23,8 @@ export interface ConfirmationDialogProps {
 }
 
 export function ConfirmationDialog({
-  cancelText = 'Cancel',
-  confirmText = 'Confirm',
+  cancelText = "Cancel",
+  confirmText = "Confirm",
   description,
   isDestructive = true,
   onConfirm,
@@ -50,8 +50,8 @@ export function ConfirmationDialog({
           <AlertDialogAction
             className={`rounded-none font-display uppercase tracking-wider ${
               isDestructive
-                ? 'bg-status-red text-white hover:bg-status-red/90'
-                : ''
+                ? "bg-status-red text-white hover:bg-status-red/90"
+                : ""
             }`}
             onClick={(e: React.MouseEvent) => {
               // Stop propagation if this is inside a clickable row/card

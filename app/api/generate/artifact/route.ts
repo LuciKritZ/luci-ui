@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import User from '@/models/user.model';
-import dbConnect from '@/utils/db.utils';
+import User from "@/models/user.model";
+import dbConnect from "@/utils/db.utils";
 import {
   compilePrompt,
   executeWithFallback,
   getActionDefinition,
-} from '@/utils/genai.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
-import { enforceRateLimit } from '@/utils/ratelimit.utils';
-import { getThemeString } from '@/utils/theme.utils';
+} from "@/utils/genai.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
+import { enforceRateLimit } from "@/utils/ratelimit.utils";
+import { getThemeString } from "@/utils/theme.utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const rateLimitResponse = await enforceRateLimit(
       session.userId,
-      'generate-artifact',
+      "generate-artifact",
       10,
       60
     );
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     if (!prompt || !styleInstruction) {
       return NextResponse.json(
-        { error: 'Prompt and styleInstruction are required' },
+        { error: "Prompt and styleInstruction are required" },
         { status: 400 }
       );
     }
@@ -39,10 +39,10 @@ export async function POST(request: NextRequest) {
     const user = await User.findById(session.userId);
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const actionDef = await getActionDefinition('createThemeArtifacts');
+    const actionDef = await getActionDefinition("createThemeArtifacts");
 
     const responseStream = await executeWithFallback(
       user,
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
           theme: themeString,
         });
         return await genAI.models.generateContentStream({
-          contents: [{ parts: [{ text: artifactPrompt }], role: 'user' }],
+          contents: [{ parts: [{ text: artifactPrompt }], role: "user" }],
           model: modelId,
         });
       },
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
             }
           }
         } catch (error) {
-          console.error('Artifact streaming error:', error);
+          console.error("Artifact streaming error:", error);
           controller.error(error);
         } finally {
           controller.close();
@@ -82,14 +82,16 @@ export async function POST(request: NextRequest) {
 
     return new NextResponse(stream, {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Transfer-Encoding': 'chunked',
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
       },
     });
   } catch (error) {
-    console.error('Artifact generation error:', error);
+    console.error("Artifact generation error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      {
+        error: error instanceof Error ? error.message : "Internal Server Error",
+      },
       { status: 500 }
     );
   }

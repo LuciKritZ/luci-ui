@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { useAuth } from '@/contexts/auth.context';
+import { Button } from "@/components/atoms/index.atoms";
+import { useAuth } from "@/contexts/auth.context";
 
 export function SignupForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
   const router = useRouter();
@@ -19,18 +19,18 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const result = await signup(email, password, name);
       if (result.success) {
-        router.push('/');
+        router.push("/");
       } else {
-        setError(result.error || 'Failed to sign up');
+        setError(result.error || "Failed to sign up");
       }
     } catch (err) {
-      console.error('Signup error:', err);
-      setError('An unexpected error occurred');
+      console.error("Signup error:", err);
+      setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -107,13 +107,13 @@ export function SignupForm() {
               disabled={isLoading}
               type='submit'
             >
-              {isLoading ? 'Processing...' : 'Authorize Signup'}
+              {isLoading ? "Processing..." : "Authorize Signup"}
             </Button>
           </form>
 
           <div className='mt-8 text-center'>
             <p className='text-sm text-zinc-500 font-mono uppercase tracking-widest'>
-              Already authorized?{' '}
+              Already authorized?{" "}
               <Link className='text-white hover:underline' href='/login'>
                 Login
               </Link>

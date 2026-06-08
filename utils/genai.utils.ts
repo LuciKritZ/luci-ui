@@ -1,8 +1,8 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
 
-import ActionDefinition from '@/models/action-definition.model';
-import { IApiKey, IUser } from '@/models/user.model';
-import { decrypt } from '@/utils/encryption.utils';
+import ActionDefinition from "@/models/action-definition.model";
+import { IApiKey, IUser } from "@/models/user.model";
+import { decrypt } from "@/utils/encryption.utils";
 
 export interface GenAIError extends Error {
   status?: number;
@@ -12,7 +12,7 @@ export function compilePrompt(
   template: string,
   variables: Record<string, string>
 ) {
-  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => variables[key] || '');
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => variables[key] || "");
 }
 
 export async function executeWithFallback<T>(
@@ -21,14 +21,34 @@ export async function executeWithFallback<T>(
   modelId: string,
   fallbackModelId?: string
 ): Promise<T> {
-  const geminiKeys = user.apiKeys?.get('gemini') || [];
+  let geminiKeys: IApiKey[] = [];
+  if (user.apiKeys) {
+    if (typeof user.apiKeys.forEach === "function") {
+      user.apiKeys.forEach((val: IApiKey | IApiKey[]) => {
+        if (Array.isArray(val)) {
+          geminiKeys = geminiKeys.concat(val);
+        } else if (val && typeof val === "object") {
+          geminiKeys.push(val as IApiKey);
+        }
+      });
+    } else {
+      // Fallback for plain objects
+      for (const val of Object.values(user.apiKeys)) {
+        if (Array.isArray(val)) {
+          geminiKeys = geminiKeys.concat(val);
+        } else if (val && typeof val === "object") {
+          geminiKeys.push(val as IApiKey);
+        }
+      }
+    }
+  }
   const activeKeys = geminiKeys
-    .filter((k: IApiKey) => k.status === 'active')
+    .filter((k: IApiKey) => k.status === "active")
     .sort((a: IApiKey, b: IApiKey) => a.priority - b.priority);
 
   if (activeKeys.length === 0) {
     throw new Error(
-      'No active Gemini API keys found. Please add or reset keys in settings.'
+      "No active Gemini API keys found. Please add or reset keys in settings."
     );
   }
 
@@ -39,30 +59,87 @@ export async function executeWithFallback<T>(
 
     try {
       const result = await generator(genAI, modelId);
+
+      // Increment usage count on success
+      let allProviderKeys: IApiKey[] = [];
+      if (typeof user.apiKeys.forEach === "function") {
+        user.apiKeys.forEach((val: IApiKey | IApiKey[]) => {
+          if (Array.isArray(val)) allProviderKeys = allProviderKeys.concat(val);
+          else if (val && typeof val === "object") allProviderKeys.push(val);
+        });
+      } else {
+        for (const val of Object.values(user.apiKeys)) {
+          if (Array.isArray(val)) allProviderKeys = allProviderKeys.concat(val);
+          else if (val && typeof val === "object") allProviderKeys.push(val);
+        }
+      }
+
+      const keyIndex = allProviderKeys.findIndex(
+        (k: IApiKey) => k._id?.toString() === keyObj._id?.toString()
+      );
+
+      if (keyIndex !== -1) {
+        allProviderKeys[keyIndex].usageCount =
+          (allProviderKeys[keyIndex].usageCount || 0) + 1;
+        if (typeof user.apiKeys.clear === "function") {
+          user.apiKeys.clear();
+          user.apiKeys.set("gemini", allProviderKeys);
+        } else {
+          user.apiKeys = { gemini: allProviderKeys } as unknown as Map<
+            string,
+            IApiKey[]
+          >;
+        }
+        await user.save();
+      }
+
       return result;
     } catch (e: unknown) {
       const error = e as GenAIError;
       // Handle rate limits or quota errors
-      if (error.status === 429 || error.message?.includes('429')) {
+      if (error.status === 429 || error.message?.includes("429")) {
+        console.error("Exact Google API Error:", error);
         console.warn(
           `Gemini API Key (Priority ${keyObj.priority}) hit rate limit/quota. Marking as exhausted.`
         );
 
         // Mark key as exhausted
-        keyObj.status = 'exhausted';
+        keyObj.status = "exhausted";
 
         // Update user in DB
-        const allProviderKeys = user.apiKeys.get('gemini');
-        if (allProviderKeys) {
-          const keyIndex = allProviderKeys.findIndex(
-            (k: IApiKey) => k._id?.toString() === keyObj._id?.toString()
-          );
-
-          if (keyIndex !== -1) {
-            allProviderKeys[keyIndex].status = 'exhausted';
-            user.apiKeys.set('gemini', allProviderKeys);
-            await user.save();
+        let exhaustedProviderKeys: IApiKey[] = [];
+        if (typeof user.apiKeys.forEach === "function") {
+          user.apiKeys.forEach((val: IApiKey | IApiKey[]) => {
+            if (Array.isArray(val))
+              exhaustedProviderKeys = exhaustedProviderKeys.concat(val);
+            else if (val && typeof val === "object")
+              exhaustedProviderKeys.push(val);
+          });
+        } else {
+          for (const val of Object.values(user.apiKeys)) {
+            if (Array.isArray(val))
+              exhaustedProviderKeys = exhaustedProviderKeys.concat(val);
+            else if (val && typeof val === "object")
+              exhaustedProviderKeys.push(val);
           }
+        }
+
+        const exKeyIndex = exhaustedProviderKeys.findIndex(
+          (k: IApiKey) => k._id?.toString() === keyObj._id?.toString()
+        );
+
+        if (exKeyIndex !== -1) {
+          exhaustedProviderKeys[exKeyIndex].status = "exhausted";
+          if (typeof user.apiKeys.clear === "function") {
+            user.apiKeys.clear();
+            user.apiKeys.set("gemini", exhaustedProviderKeys);
+          } else {
+            user.apiKeys = { gemini: exhaustedProviderKeys } as unknown as Map<
+              string,
+              IApiKey[]
+            >;
+          }
+          await user.save();
         }
 
         if (i < activeKeys.length - 1) {
@@ -72,7 +149,7 @@ export async function executeWithFallback<T>(
           continue;
         } else {
           throw new Error(
-            'All Gemini API keys are exhausted. Please add new ones or wait for quota reset.'
+            "All Gemini API keys are exhausted. Please add new ones or wait for quota reset."
           );
         }
       }
@@ -83,7 +160,46 @@ export async function executeWithFallback<T>(
           `Model ${modelId} failed. Trying fallback model ${fallbackModelId}...`
         );
         try {
-          return await generator(genAI, fallbackModelId);
+          const fallbackResult = await generator(genAI, fallbackModelId);
+
+          // Increment usage count on success
+          let fallbackProviderKeys: IApiKey[] = [];
+          if (typeof user.apiKeys.forEach === "function") {
+            user.apiKeys.forEach((val: IApiKey | IApiKey[]) => {
+              if (Array.isArray(val))
+                fallbackProviderKeys = fallbackProviderKeys.concat(val);
+              else if (val && typeof val === "object")
+                fallbackProviderKeys.push(val);
+            });
+          } else {
+            for (const val of Object.values(user.apiKeys)) {
+              if (Array.isArray(val))
+                fallbackProviderKeys = fallbackProviderKeys.concat(val);
+              else if (val && typeof val === "object")
+                fallbackProviderKeys.push(val);
+            }
+          }
+
+          const fbKeyIndex = fallbackProviderKeys.findIndex(
+            (k: IApiKey) => k._id?.toString() === keyObj._id?.toString()
+          );
+
+          if (fbKeyIndex !== -1) {
+            fallbackProviderKeys[fbKeyIndex].usageCount =
+              (fallbackProviderKeys[fbKeyIndex].usageCount || 0) + 1;
+            if (typeof user.apiKeys.clear === "function") {
+              user.apiKeys.clear();
+              user.apiKeys.set("gemini", fallbackProviderKeys);
+            } else {
+              user.apiKeys = { gemini: fallbackProviderKeys } as unknown as Map<
+                string,
+                IApiKey[]
+              >;
+            }
+            await user.save();
+          }
+
+          return fallbackResult;
         } catch (fallbackError) {
           throw fallbackError;
         }
@@ -94,7 +210,7 @@ export async function executeWithFallback<T>(
     }
   }
 
-  throw new Error('Unexpected end of fallback execution');
+  throw new Error("Unexpected end of fallback execution");
 }
 
 export async function getActionDefinition(name: string) {

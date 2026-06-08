@@ -1,10 +1,10 @@
-import { GoogleGenAI } from '@google/genai';
-import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenAI } from "@google/genai";
+import { NextRequest, NextResponse } from "next/server";
 
-import User, { IApiKey } from '@/models/user.model';
-import dbConnect from '@/utils/db.utils';
-import { decrypt } from '@/utils/encryption.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import User, { IApiKey } from "@/models/user.model";
+import dbConnect from "@/utils/db.utils";
+import { decrypt } from "@/utils/encryption.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 let cachedModels: null | { description?: string; id: string; name: string }[] =
   null;
@@ -27,16 +27,35 @@ export async function GET(request: NextRequest) {
 
     const user = await User.findById(session.userId);
     if (!user || !user.apiKeys)
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    const geminiKeys = user.apiKeys.get('gemini') || [];
+    let geminiKeys: IApiKey[] = [];
+    if (user.apiKeys) {
+      if (typeof user.apiKeys.forEach === "function") {
+        // Values are expected to be IApiKey[], but we handle legacy/malformed data
+        // where a provider might have been stored as a single object (IApiKey)
+        user.apiKeys.forEach((val: IApiKey | IApiKey[]) => {
+          if (Array.isArray(val)) geminiKeys = geminiKeys.concat(val);
+          else if (val && typeof val === "object")
+            geminiKeys.push(val as IApiKey);
+        });
+      } else {
+        for (const val of Object.values(
+          user.apiKeys as Record<string, IApiKey | IApiKey[]>
+        )) {
+          if (Array.isArray(val)) geminiKeys = geminiKeys.concat(val);
+          else if (val && typeof val === "object")
+            geminiKeys.push(val as IApiKey);
+        }
+      }
+    }
     const activeKeys = geminiKeys
-      .filter((k: IApiKey) => k.status === 'active')
+      .filter((k: IApiKey) => k.status === "active")
       .sort((a: IApiKey, b: IApiKey) => a.priority - b.priority);
 
     if (activeKeys.length === 0) {
       return NextResponse.json(
-        { error: 'No active Gemini API keys found' },
+        { error: "No active Gemini API keys found" },
         { status: 400 }
       );
     }
@@ -52,12 +71,12 @@ export async function GET(request: NextRequest) {
       // Only include gemini models, ignore legacy text-bison etc.
       if (
         model.name &&
-        (model.name.includes('gemini') || model.name.includes('learnlm'))
+        (model.name.includes("gemini") || model.name.includes("learnlm"))
       ) {
         models.push({
           description: model.description,
-          id: model.name.replace(/^models\//, ''),
-          name: model.displayName || model.name.replace(/^models\//, ''),
+          id: model.name.replace(/^models\//, ""),
+          name: model.displayName || model.name.replace(/^models\//, ""),
         });
       }
     }
@@ -70,9 +89,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(models);
   } catch (error) {
-    console.error('Models GET error:', error);
+    console.error("Models GET error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch models' },
+      { error: "Failed to fetch models" },
       { status: 500 }
     );
   }

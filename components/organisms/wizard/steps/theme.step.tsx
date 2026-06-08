@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { CheckIcon, PaletteIcon, SparklesIcon } from 'lucide-react';
-import Link from 'next/link';
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  PaletteIcon,
+  SparklesIcon,
+} from "lucide-react";
+import Link from "next/link";
 
-import { useDesignSystem } from '@/contexts/design.context';
-import { useProject } from '@/contexts/project.context';
-import { cn } from '@/utils/index.utils';
+import { Button } from "@/components/atoms/index.atoms";
+import { useDesignSystem } from "@/contexts/design.context";
+import { useProject } from "@/contexts/project.context";
+import { cn } from "@/utils/index.utils";
 
 export function ThemeStep() {
   const { savedThemes } = useDesignSystem();
-  const { currentProject, updateProject } = useProject();
+  const { currentProject, setWizardStep, updateProject } = useProject();
 
   const selectedThemeId = currentProject?.theme;
 
@@ -69,10 +75,10 @@ export function ThemeStep() {
         {savedThemes.map(theme => (
           <div
             className={cn(
-              'group relative p-6 rounded-3xl border transition-all cursor-pointer',
+              "group relative p-6 rounded-3xl border transition-all cursor-pointer",
               selectedThemeId === theme.id
-                ? 'bg-brand/5 border-brand/50 ring-2 ring-brand/20 shadow-xl shadow-brand/5'
-                : 'bg-surface border-border hover:border-content-tertiary/50'
+                ? "bg-brand/5 border-brand/50 ring-2 ring-brand/20 shadow-xl shadow-brand/5"
+                : "bg-surface border-border hover:border-content-tertiary/50"
             )}
             key={theme.id}
             onClick={() => handleSelect(theme.id!)}
@@ -125,11 +131,22 @@ export function ThemeStep() {
               </div>
 
               <p className='text-[11px] text-content-tertiary line-clamp-1 italic'>
-                {theme.description || 'A cohesive design system built with AI.'}
+                {theme.description || "A cohesive design system built with AI."}
               </p>
             </div>
           </div>
         ))}
+      </div>
+
+      <div className='flex justify-end mt-12'>
+        <Button
+          className='h-12 px-8 text-sm font-bold uppercase tracking-widest'
+          disabled={!selectedThemeId}
+          onClick={() => setWizardStep("build")}
+        >
+          Next Step
+          <ArrowRightIcon className='w-4 h-4 ml-2' />
+        </Button>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import User, { IApiKey } from '@/models/user.model';
-import dbConnect from '@/utils/db.utils';
-import { encrypt } from '@/utils/encryption.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import User, { IApiKey } from "@/models/user.model";
+import dbConnect from "@/utils/db.utils";
+import { encrypt } from "@/utils/encryption.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -11,15 +11,15 @@ export async function DELETE(request: NextRequest) {
     if (!session) return unauthorizedResponse();
 
     const body = await request.json();
-    const { keyId, provider = 'gemini' } = body;
+    const { keyId, provider = "gemini" } = body;
 
     if (!keyId)
-      return NextResponse.json({ error: 'Missing keyId' }, { status: 400 });
+      return NextResponse.json({ error: "Missing keyId" }, { status: 400 });
 
     await dbConnect();
     const user = await User.findById(session.userId);
     if (!user || !user.apiKeys)
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const providerKey = provider.toLowerCase();
     const currentKeys = user.apiKeys.get(providerKey) || [];
@@ -30,17 +30,17 @@ export async function DELETE(request: NextRequest) {
     );
 
     if (newKeys.length === currentKeys.length) {
-      return NextResponse.json({ error: 'Key not found' }, { status: 404 });
+      return NextResponse.json({ error: "Key not found" }, { status: 404 });
     }
 
     user.apiKeys.set(providerKey, newKeys);
     await user.save();
 
-    return NextResponse.json({ message: 'Key deleted successfully' });
+    return NextResponse.json({ message: "Key deleted successfully" });
   } catch (error) {
-    console.error('Settings DELETE error:', error);
+    console.error("Settings DELETE error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
@@ -57,14 +57,14 @@ export async function GET(request: NextRequest) {
 
     const user = await User.findById(session.userId);
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Map keys to a safe format for the frontend
     const keysInfo: Record<string, unknown> = {};
     let hasGeminiKey = false;
 
-    if (user.apiKeys && typeof user.apiKeys.forEach === 'function') {
+    if (user.apiKeys && typeof user.apiKeys.forEach === "function") {
       user.apiKeys.forEach((keys: IApiKey[], provider: string) => {
         if (Array.isArray(keys)) {
           keysInfo[provider] = keys.map(key => ({
@@ -74,8 +74,9 @@ export async function GET(request: NextRequest) {
             meta: key.meta,
             priority: key.priority,
             status: key.status,
+            usageCount: key.usageCount || 0,
           }));
-          if (provider === 'gemini' && keys.length > 0) {
+          if (provider === "gemini" && keys.length > 0) {
             hasGeminiKey = true;
           }
         }
@@ -91,8 +92,9 @@ export async function GET(request: NextRequest) {
             meta: key.meta,
             priority: key.priority,
             status: key.status,
+            usageCount: key.usageCount || 0,
           }));
-          if (provider === 'gemini' && keys.length > 0) {
+          if (provider === "gemini" && keys.length > 0) {
             hasGeminiKey = true;
           }
         }
@@ -104,9 +106,9 @@ export async function GET(request: NextRequest) {
       keys: keysInfo,
     });
   } catch (error) {
-    console.error('Settings GET error:', error);
+    console.error("Settings GET error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
@@ -114,10 +116,10 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    console.log('PATCH /api/user/settings: Starting...');
+    console.log("PATCH /api/user/settings: Starting...");
     const session = await getSession(request);
     if (!session) {
-      console.log('PATCH /api/user/settings: No session found');
+      console.log("PATCH /api/user/settings: No session found");
       return unauthorizedResponse();
     }
 
@@ -127,36 +129,36 @@ export async function PATCH(request: NextRequest) {
       keyId,
       meta,
       priority = 1,
-      provider = 'gemini',
+      provider = "gemini",
     } = body;
-    console.log('PATCH /api/user/settings: Decoded userId:', session.userId);
-    console.log('PATCH /api/user/settings: Provider:', provider);
-    console.log('PATCH /api/user/settings: Has key in body:', !!geminiApiKey);
-    console.log('PATCH /api/user/settings: Has keyId in body:', !!keyId);
+    console.log("PATCH /api/user/settings: Decoded userId:", session.userId);
+    console.log("PATCH /api/user/settings: Provider:", provider);
+    console.log("PATCH /api/user/settings: Has key in body:", !!geminiApiKey);
+    console.log("PATCH /api/user/settings: Has keyId in body:", !!keyId);
 
     // Validate meta description
     if (meta && meta.description !== undefined) {
-      if (typeof meta.description !== 'string') {
+      if (typeof meta.description !== "string") {
         return NextResponse.json(
-          { error: 'Description must be a string' },
+          { error: "Description must be a string" },
           { status: 400 }
         );
       }
       if (meta.description.length > 50) {
         return NextResponse.json(
-          { error: 'Description cannot exceed 50 characters' },
+          { error: "Description cannot exceed 50 characters" },
           { status: 400 }
         );
       }
     }
 
     await dbConnect();
-    console.log('PATCH /api/user/settings: DB Connected');
+    console.log("PATCH /api/user/settings: DB Connected");
 
     const user = await User.findById(session.userId);
     if (!user) {
-      console.log('PATCH /api/user/settings: User not found in DB');
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      console.log("PATCH /api/user/settings: User not found in DB");
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Initialize apiKeys if it doesn't exist
@@ -168,7 +170,7 @@ export async function PATCH(request: NextRequest) {
     const currentKeys = user.apiKeys.get(providerKey) || [];
 
     if (keyId) {
-      console.log('PATCH /api/user/settings: Updating existing key...');
+      console.log("PATCH /api/user/settings: Updating existing key...");
       const keyIndex = currentKeys.findIndex(
         (k: IApiKey) => k._id?.toString() === keyId
       );
@@ -183,51 +185,65 @@ export async function PATCH(request: NextRequest) {
             description: meta.description,
           };
         }
-        user.apiKeys.set(providerKey, currentKeys);
+        if (typeof user.apiKeys.set === "function") {
+          user.apiKeys.set(providerKey, currentKeys);
+        } else {
+          user.apiKeys = {
+            ...user.apiKeys,
+            [providerKey]: currentKeys,
+          } as unknown as Map<string, IApiKey[]>;
+        }
       } else {
-        return NextResponse.json({ error: 'Key not found' }, { status: 404 });
+        return NextResponse.json({ error: "Key not found" }, { status: 404 });
       }
     } else if (geminiApiKey) {
-      console.log('PATCH /api/user/settings: Encrypting key...');
+      console.log("PATCH /api/user/settings: Encrypting key...");
       try {
         const { encryptedText, iv } = encrypt(geminiApiKey);
-        console.log('PATCH /api/user/settings: Encryption successful');
+        console.log("PATCH /api/user/settings: Encryption successful");
 
         currentKeys.push({
           encryptedKey: encryptedText,
           iv: iv,
-          meta: meta || { description: 'Gemini API Key' },
+          meta: meta || { description: "Gemini API Key" },
           priority: priority,
-          status: 'active',
+          status: "active",
         });
-        user.apiKeys.set(providerKey, currentKeys);
+        if (typeof user.apiKeys.set === "function") {
+          user.apiKeys.set(providerKey, currentKeys);
+        } else {
+          user.apiKeys = {
+            ...user.apiKeys,
+            [providerKey]: currentKeys,
+          } as unknown as Map<string, IApiKey[]>;
+        }
       } catch (encryptError) {
         console.error(
-          'PATCH /api/user/settings: Encryption failed:',
+          "PATCH /api/user/settings: Encryption failed:",
           encryptError
         );
         return NextResponse.json(
-          { error: 'Encryption failed' },
+          { error: "Encryption failed" },
           { status: 500 }
         );
       }
     }
 
-    console.log('PATCH /api/user/settings: Saving user...');
+    console.log("PATCH /api/user/settings: Saving user...");
     await user.save();
-    console.log('PATCH /api/user/settings: Save successful');
+    console.log("PATCH /api/user/settings: Save successful");
 
     return NextResponse.json({
       hasKey: true,
       message: `${provider} API key added successfully`,
     });
   } catch (error) {
-    console.error('Settings PATCH error:', error);
+    console.error("Settings PATCH error:", error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : 'Internal Server Error',
+        error: error instanceof Error ? error.message : "Internal Server Error",
         stack:
-          process.env.NODE_ENV === 'development'
+          process.env.NODE_ENV === "development"
             ? error instanceof Error
               ? error.stack
               : undefined

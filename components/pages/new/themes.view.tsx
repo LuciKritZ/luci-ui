@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { CheckIcon, RotateCcwIcon, SaveIcon, SparklesIcon } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import { CheckIcon, RotateCcwIcon, SaveIcon, SparklesIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 
-import { Button, Skeleton } from '@/components/atoms/index.atoms';
-import { DashboardPreview } from '@/components/molecules/dashboard-preview.molecule';
-import { HeaderManager } from '@/components/molecules/header-manager.molecule';
-import { IDesignTheme, useDesignSystem } from '@/contexts/design.context';
-import { cn } from '@/utils/index.utils';
+import { Button, Skeleton } from "@/components/atoms/index.atoms";
+import { DashboardPreview } from "@/components/molecules/dashboard-preview.molecule";
+import { HeaderManager } from "@/components/molecules/header-manager.molecule";
+import { IDesignTheme, useDesignSystem } from "@/contexts/design.context";
+import { cn } from "@/utils/index.utils";
 
 export function NewThemesView() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const fromWizard = searchParams.get('from') === 'wizard';
+  const fromWizard = searchParams.get("from") === "wizard";
 
   const {
     activePreviewTheme,
@@ -23,10 +23,10 @@ export function NewThemesView() {
     setActivePreviewTheme,
   } = useDesignSystem();
 
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
   const [generatedThemes, setGeneratedThemes] = useState<IDesignTheme[]>([]);
   const [savedThemeIds, setSavedThemeIds] = useState<Set<string>>(new Set());
-  const [previewMode] = useState<'dark' | 'light'>('dark');
+  const [previewMode] = useState<"dark" | "light">("dark");
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ export function NewThemesView() {
         setActivePreviewTheme(themes[0]);
       }
     } catch (error) {
-      console.error('Generation failed:', error);
+      console.error("Generation failed:", error);
     }
   };
 
@@ -49,10 +49,10 @@ export function NewThemesView() {
       setSavedThemeIds(prev => new Set(prev).add(index.toString()));
 
       if (fromWizard) {
-        router.push('/new');
+        router.push("/new");
       }
     } catch (error) {
-      console.error('Save failed:', error);
+      console.error("Save failed:", error);
     }
   };
 
@@ -135,19 +135,19 @@ export function NewThemesView() {
             generatedThemes.map((theme, index) => {
               const colors = theme.colors?.[previewMode] || theme.colors?.dark;
               const currentColors = colors || {
-                accent: '#3b82f6',
-                background: '#ffffff',
-                content: '#09090b',
-                primary: '#18181b',
-                surface: '#f9fafb',
+                accent: "#3b82f6",
+                background: "#ffffff",
+                content: "#09090b",
+                primary: "#18181b",
+                surface: "#f9fafb",
               };
               return (
                 <div
                   className={cn(
-                    'group relative p-4 rounded-2xl border transition-all cursor-pointer',
+                    "group relative p-4 rounded-2xl border transition-all cursor-pointer",
                     activePreviewTheme?.name === theme.name
-                      ? 'bg-brand/5 border-brand/50 ring-1 ring-brand/50'
-                      : 'bg-surface border-border hover:border-content-tertiary/50'
+                      ? "bg-brand/5 border-brand/50 ring-1 ring-brand/50"
+                      : "bg-surface border-border hover:border-content-tertiary/50"
                   )}
                   key={index}
                   onClick={() => setActivePreviewTheme(theme)}

@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
-import { clearModelIfLocal } from '@/utils/db.utils';
+import { clearModelIfLocal } from "@/utils/db.utils";
 
 export interface IRateLimit extends Document {
   count: number;
@@ -19,7 +19,7 @@ const RateLimitSchema: Schema = new Schema(
   }
 );
 
-clearModelIfLocal('RateLimit');
+clearModelIfLocal("RateLimit");
 
 export default mongoose.models.RateLimit ||
-  mongoose.model<IRateLimit>('RateLimit', RateLimitSchema);
+  mongoose.model<IRateLimit>("RateLimit", RateLimitSchema);

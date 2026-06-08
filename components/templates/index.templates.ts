@@ -1,1 +1,1 @@
-export * from './main-layout.template';
+export * from "./main-layout.template";

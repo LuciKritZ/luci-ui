@@ -1,4 +1,4 @@
-import { PaletteIcon } from 'lucide-react';
+import { PaletteIcon } from "lucide-react";
 
 export function NoThemeSelected() {
   return (

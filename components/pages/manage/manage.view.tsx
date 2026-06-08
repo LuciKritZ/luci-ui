@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 import {
   Button,
@@ -19,9 +19,9 @@ import {
   TableHeader,
   TableRow,
   Textarea,
-} from '@/components/atoms/index.atoms';
-import { HeaderManager } from '@/components/molecules/header-manager.molecule';
-import { ConfirmationDialog } from '@/components/molecules/index.molecules';
+} from "@/components/atoms/index.atoms";
+import { HeaderManager } from "@/components/molecules/header-manager.molecule";
+import { ConfirmationDialog } from "@/components/molecules/index.molecules";
 
 export interface ActionItem {
   _id?: string;
@@ -30,6 +30,7 @@ export interface ActionItem {
   model: string;
   name: string;
   prompt: string;
+  responseSchema?: string;
 }
 
 export function ManageView() {
@@ -41,10 +42,21 @@ export function ManageView() {
   const [editingId, setEditingId] = useState<null | string>(null);
   const [showForm, setShowForm] = useState(false);
 
-  const [name, setName] = useState('');
-  const [prompt, setPrompt] = useState('');
-  const [model, setModel] = useState('');
-  const [fallbackModel, setFallbackModel] = useState('');
+  const [name, setName] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [responseSchema, setResponseSchema] = useState("");
+
+  const isValidJson = () => {
+    if (!responseSchema.trim()) return true;
+    try {
+      JSON.parse(responseSchema);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const [model, setModel] = useState("");
+  const [fallbackModel, setFallbackModel] = useState("");
 
   useEffect(() => {
     fetchModels();
@@ -53,7 +65,7 @@ export function ManageView() {
 
   const fetchModels = async () => {
     try {
-      const res = await fetch('/api/models');
+      const res = await fetch("/api/models");
       if (res.ok) {
         const data = await res.json();
         setModels(data);
@@ -66,7 +78,7 @@ export function ManageView() {
   const fetchActions = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/actions');
+      const res = await fetch("/api/actions");
       if (res.ok) {
         const data = await res.json();
         setActions(data);
@@ -79,23 +91,24 @@ export function ManageView() {
   };
 
   const handleEdit = (action: ActionItem) => {
-    if (!action.id || !action._id) {
+    if (!action.id && !action._id) {
       return;
     }
     setEditingId(action.id || action._id || null);
     setName(action.name);
     setPrompt(action.prompt);
+    setResponseSchema(action.responseSchema || "");
     setModel(action.model);
-    setFallbackModel(action.fallbackModel || '');
+    setFallbackModel(action.fallbackModel || "");
     setShowForm(true);
   };
 
-  const handleDelete = async (id: undefined | string) => {
+  const handleDelete = async (id: string | undefined) => {
     if (!id) {
       return;
     }
     try {
-      const res = await fetch(`/api/actions/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/actions/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchActions();
       }
@@ -109,29 +122,31 @@ export function ManageView() {
 
     setIsSaving(true);
     try {
-      const method = editingId ? 'PUT' : 'POST';
-      const url = editingId ? `/api/actions/${editingId}` : '/api/actions';
+      const method = editingId ? "PUT" : "POST";
+      const url = editingId ? `/api/actions/${editingId}` : "/api/actions";
 
       const payload = {
-        fallbackModel: fallbackModel === 'none' ? undefined : fallbackModel,
+        fallbackModel: fallbackModel === "none" ? undefined : fallbackModel,
         model,
         name,
         prompt,
+        responseSchema: responseSchema.trim() ? responseSchema : undefined,
       };
 
       const res = await fetch(url, {
         body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         method,
       });
 
       if (res.ok) {
         setShowForm(false);
         setEditingId(null);
-        setName('');
-        setPrompt('');
-        setModel('');
-        setFallbackModel('');
+        setName("");
+        setPrompt("");
+        setResponseSchema("");
+        setModel("");
+        setFallbackModel("");
         fetchActions();
       }
     } catch (e) {
@@ -162,7 +177,7 @@ export function ManageView() {
         {showForm && (
           <div className='p-6 border border-border bg-surface space-y-4'>
             <h3 className='text-sm font-bold uppercase mb-4'>
-              {editingId ? 'Edit Action' : 'New Action'}
+              {editingId ? "Edit Action" : "New Action"}
             </h3>
 
             <div className='space-y-4'>
@@ -191,6 +206,26 @@ export function ManageView() {
                   rows={6}
                   value={prompt}
                 />
+              </div>
+
+              <div>
+                <label className='text-xs uppercase text-content-secondary mb-1 block'>
+                  Response Schema (JSON)
+                </label>
+                <Textarea
+                  className={`font-mono text-sm ${!isValidJson() ? "border-red-500" : ""}`}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setResponseSchema(e.target.value)
+                  }
+                  placeholder='Optional JSON Schema...'
+                  rows={6}
+                  value={responseSchema}
+                />
+                {!isValidJson() && (
+                  <p className='text-xs text-red-500 mt-1'>
+                    Invalid JSON format
+                  </p>
+                )}
               </div>
 
               <div className='grid grid-cols-2 gap-4'>
@@ -242,10 +277,11 @@ export function ManageView() {
                 onClick={() => {
                   setShowForm(false);
                   setEditingId(null);
-                  setName('');
-                  setPrompt('');
-                  setModel('');
-                  setFallbackModel('');
+                  setName("");
+                  setPrompt("");
+                  setResponseSchema("");
+                  setModel("");
+                  setFallbackModel("");
                 }}
                 variant='ghost'
               >
@@ -253,10 +289,12 @@ export function ManageView() {
               </Button>
               <Button
                 className='bg-brand text-white'
-                disabled={isSaving || !name || !prompt || !model}
+                disabled={
+                  isSaving || !name || !prompt || !model || !isValidJson()
+                }
                 onClick={handleSave}
               >
-                {isSaving ? 'Saving...' : 'Save'}
+                {isSaving ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
@@ -326,10 +364,10 @@ export function ManageView() {
                           action.model}
                       </TableCell>
                       <TableCell className='font-mono text-xs'>
-                        {action.fallbackModel && action.fallbackModel !== 'none'
+                        {action.fallbackModel && action.fallbackModel !== "none"
                           ? models.find(m => m.id === action.fallbackModel)
                               ?.name || action.fallbackModel
-                          : '-'}
+                          : "-"}
                       </TableCell>
                       <TableCell className='text-right'>
                         <Button

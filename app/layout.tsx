@@ -1,21 +1,21 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Inter, Space_Grotesk } from "next/font/google";
 
-import { AuthProvider } from '@/contexts/auth.context';
-import { ThemeProvider } from '@/providers/index.provider';
+import { AuthProvider } from "@/contexts/auth.context";
+import { ThemeProvider } from "@/providers/index.provider";
 
-import './globals.css';
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
 });
 
 export const metadata: Metadata = {
-  description: 'Generate multi-platform PWAs with ease.',
-  title: 'Luci UI | Atomic SaaS',
+  description: "Generate multi-platform PWAs with ease.",
+  title: "Luci UI | Atomic SaaS",
 };
 
 export default function RootLayout({

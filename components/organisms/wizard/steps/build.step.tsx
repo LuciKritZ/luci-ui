@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { CheckCircle2Icon, Loader2Icon, SparklesIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { motion } from "framer-motion";
+import { CheckCircle2Icon, Loader2Icon, SparklesIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-import { useProject } from '@/contexts/project.context';
+import { useProject } from "@/contexts/project.context";
 
 const STEPS = [
-  'Analyzing your idea...',
-  'Applying design tokens...',
-  'Generating component architecture...',
-  'Assembling your Next.js PWA...',
-  'Finalizing build...',
+  "Analyzing your idea...",
+  "Applying design tokens...",
+  "Generating component architecture...",
+  "Assembling your Next.js PWA...",
+  "Finalizing build...",
 ];
 
 export function BuildStep() {
@@ -23,7 +23,7 @@ export function BuildStep() {
       setCurrentStepIndex(prev => {
         if (prev < STEPS.length - 1) return prev + 1;
         clearInterval(interval);
-        setTimeout(() => setWizardStep('iterate'), 1500);
+        setTimeout(() => setWizardStep("iterate"), 1500);
         return prev;
       });
     }, 1800);
@@ -38,7 +38,7 @@ export function BuildStep() {
         <motion.div
           animate={{ rotate: 360 }}
           className='relative w-32 h-32 rounded-full border-2 border-dashed border-zinc-800 flex items-center justify-center'
-          transition={{ duration: 8, ease: 'linear', repeat: Infinity }}
+          transition={{ duration: 8, ease: "linear", repeat: Infinity }}
         >
           <div className='w-24 h-24 rounded-full border-t-2 border-white animate-spin-slow' />
         </motion.div>
@@ -69,7 +69,7 @@ export function BuildStep() {
                 )}
               </div>
               <span
-                className={`text-sm font-medium transition-colors ${isActive ? 'text-white' : 'text-zinc-500'}`}
+                className={`text-sm font-medium transition-colors ${isActive ? "text-white" : "text-zinc-500"}`}
               >
                 {step}
               </span>
