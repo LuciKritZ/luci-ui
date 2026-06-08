@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Variants } from 'framer-motion';
-import { ExternalLinkIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { motion } from "framer-motion";
+import { Variants } from "framer-motion";
+import { ExternalLinkIcon, Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { ConfirmationDialog } from '@/components/molecules/index.molecules';
-import { useProject } from '@/contexts/project.context';
-import { Project } from '@/types/project.types';
+import { Button } from "@/components/atoms/index.atoms";
+import { ConfirmationDialog } from "@/components/molecules/index.molecules";
+import { useProject } from "@/contexts/project.context";
+import { Project } from "@/types/project.types";
 
 interface DashboardProjectCardProps {
   project: Project;
@@ -27,14 +27,17 @@ export function DashboardProjectCard({
     e.stopPropagation();
     setCurrentProject(project);
     // Based on whether it has a theme or versions, we could set the step, but for now we resume to the wizard
-    if (project.versions && project.versions.length > 0) {
-      setWizardStep('iterate');
+    if (
+      (project.versions && project.versions.length > 0) ||
+      (project.artifacts && project.artifacts.length > 0)
+    ) {
+      setWizardStep("iterate");
     } else if (project.theme) {
-      setWizardStep('build');
+      setWizardStep("build");
     } else {
-      setWizardStep('theme');
+      setWizardStep("theme");
     }
-    router.push('/new');
+    router.push(`/project/${project.id}`);
   };
 
   const handleDelete = (e?: React.MouseEvent) => {

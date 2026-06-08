@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import ActionDefinition from '@/models/action-definition.model';
-import dbConnect from '@/utils/db.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import ActionDefinition from "@/models/action-definition.model";
+import dbConnect from "@/utils/db.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 export async function DELETE(
   request: NextRequest,
@@ -20,14 +20,14 @@ export async function DELETE(
     const deletedAction = await ActionDefinition.findByIdAndDelete(id);
 
     if (!deletedAction) {
-      return NextResponse.json({ error: 'Action not found' }, { status: 404 });
+      return NextResponse.json({ error: "Action not found" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete action error:', error);
+    console.error("Delete action error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
@@ -45,13 +45,24 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { fallbackModel, model, name, prompt } = body;
+    const { fallbackModel, model, name, prompt, responseSchema } = body;
 
     if (!name || !model || !prompt) {
       return NextResponse.json(
-        { error: 'Name, model, and prompt are required' },
+        { error: "Name, model, and prompt are required" },
         { status: 400 }
       );
+    }
+
+    if (responseSchema) {
+      try {
+        JSON.parse(responseSchema);
+      } catch {
+        return NextResponse.json(
+          { error: "responseSchema must be valid JSON" },
+          { status: 400 }
+        );
+      }
     }
 
     await dbConnect();
@@ -62,26 +73,26 @@ export async function PUT(
     });
     if (existingAction) {
       return NextResponse.json(
-        { error: 'Action definition with this name already exists' },
+        { error: "Action definition with this name already exists" },
         { status: 400 }
       );
     }
 
     const updatedAction = await ActionDefinition.findByIdAndUpdate(
       id,
-      { fallbackModel, model, name, prompt },
+      { fallbackModel, model, name, prompt, responseSchema },
       { new: true }
     );
 
     if (!updatedAction) {
-      return NextResponse.json({ error: 'Action not found' }, { status: 404 });
+      return NextResponse.json({ error: "Action not found" }, { status: 404 });
     }
 
     return NextResponse.json(updatedAction);
   } catch (error) {
-    console.error('Update action error:', error);
+    console.error("Update action error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

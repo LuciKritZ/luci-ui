@@ -1,4 +1,7 @@
+import type { Artifact } from "./index.types";
+
 export interface Project {
+  artifacts?: Artifact[];
   createdAt: number;
   description: string;
   id: string;

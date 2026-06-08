@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { useAuth } from '@/contexts/auth.context';
+import { Button } from "@/components/atoms/index.atoms";
+import { useAuth } from "@/contexts/auth.context";
 
 export function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
@@ -18,18 +18,18 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const result = await login(email, password);
       if (result.success) {
-        router.push('/');
+        router.push("/");
       } else {
-        setError(result.error || 'Invalid credentials');
+        setError(result.error || "Invalid credentials");
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('An unexpected error occurred');
+      console.error("Login error:", err);
+      setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -92,13 +92,13 @@ export function LoginForm() {
               disabled={isLoading}
               type='submit'
             >
-              {isLoading ? 'Verifying...' : 'Authenticate'}
+              {isLoading ? "Verifying..." : "Authenticate"}
             </Button>
           </form>
 
           <div className='mt-8 text-center'>
             <p className='text-sm text-zinc-500 font-mono uppercase tracking-widest'>
-              New here?{' '}
+              New here?{" "}
               <Link className='text-white hover:underline' href='/signup'>
                 Request Authorization
               </Link>

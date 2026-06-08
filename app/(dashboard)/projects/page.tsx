@@ -1,4 +1,4 @@
-import { ProjectsPage } from '@/components/pages/index.pages';
+import { ProjectsPage } from "@/components/pages/index.pages";
 
 export default function Page() {
   return <ProjectsPage />;

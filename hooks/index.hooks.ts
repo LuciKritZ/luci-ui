@@ -1,2 +1,2 @@
-export * from './use-generator.hook';
-export * from './use-mounted.hook';
+export * from "./use-generator.hook";
+export * from "./use-mounted.hook";

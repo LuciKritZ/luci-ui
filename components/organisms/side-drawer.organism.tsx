@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { XIcon } from 'lucide-react';
-import React from 'react';
+import { AnimatePresence, motion } from "framer-motion";
+import { XIcon } from "lucide-react";
+import React from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
+import { Button } from "@/components/atoms/index.atoms";
 
 interface SideDrawerProps {
   children: React.ReactNode;
@@ -21,12 +21,12 @@ export default function SideDrawer({
 }: SideDrawerProps) {
   React.useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -47,9 +47,9 @@ export default function SideDrawer({
           <motion.div
             animate={{ x: 0 }}
             className='fixed right-0 top-0 bottom-0 z-101 w-full max-w-2xl bg-surface border-l border-border shadow-2xl flex flex-col'
-            exit={{ x: '100%' }}
-            initial={{ x: '100%' }}
-            transition={{ damping: 20, stiffness: 300, type: 'spring' }}
+            exit={{ x: "100%" }}
+            initial={{ x: "100%" }}
+            transition={{ damping: 20, stiffness: 300, type: "spring" }}
           >
             {/* Header */}
             <div className='flex items-center justify-between px-6 py-4 border-b border-border bg-background shrink-0'>

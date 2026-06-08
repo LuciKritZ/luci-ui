@@ -1,8 +1,10 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
-import { clearModelIfLocal } from '@/utils/db.utils';
+import { Artifact } from "@/types/index.types";
+import { clearModelIfLocal } from "@/utils/db.utils";
 
 export interface IProject extends Document {
+  artifacts: Artifact[];
   createdAt: number;
   description: string;
   lastEdited: number;
@@ -15,13 +17,14 @@ export interface IProject extends Document {
 
 const ProjectSchema: Schema = new Schema(
   {
+    artifacts: { default: [], type: [Schema.Types.Mixed] },
     createdAt: { required: true, type: Number },
     description: { required: true, type: String },
     lastEdited: { required: true, type: Number },
     name: { required: true, type: String },
     theme: { required: true, type: String },
     updatedAt: { required: true, type: Number },
-    userId: { ref: 'User', required: true, type: Schema.Types.ObjectId },
+    userId: { ref: "User", required: true, type: Schema.Types.ObjectId },
     versions: { default: [], type: [String] },
   },
   {
@@ -30,7 +33,7 @@ const ProjectSchema: Schema = new Schema(
 );
 
 // Add transformation to rename _id to id and remove __v
-ProjectSchema.set('toJSON', {
+ProjectSchema.set("toJSON", {
   transform: (_doc, ret: Record<string, unknown>) => {
     const r = ret as Record<string, unknown> & {
       __v?: number;
@@ -52,7 +55,7 @@ ProjectSchema.set('toJSON', {
 });
 
 // Use the centralized helper to handle hot reloading in local environment
-clearModelIfLocal('Project');
+clearModelIfLocal("Project");
 
 export default mongoose.models.Project ||
-  mongoose.model<IProject>('Project', ProjectSchema);
+  mongoose.model<IProject>("Project", ProjectSchema);

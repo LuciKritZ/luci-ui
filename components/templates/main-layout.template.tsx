@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { MoonIcon, PanelLeftClose, PanelLeftOpen, SunIcon } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import React, { useState } from 'react';
+import { MoonIcon, PanelLeftClose, PanelLeftOpen, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
+import React, { useState } from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { Sidebar } from '@/components/organisms/index.organisms';
-import { useLayout } from '@/contexts/layout.context';
-import { useMounted } from '@/hooks/index.hooks';
+import { Button } from "@/components/atoms/index.atoms";
+import { Sidebar } from "@/components/organisms/index.organisms";
+import { useLayout } from "@/contexts/layout.context";
+import { useMounted } from "@/hooks/index.hooks";
 
 interface MainLayoutTemplateProps {
   children: React.ReactNode;
@@ -47,16 +47,16 @@ export function MainLayoutTemplate({ children }: MainLayoutTemplateProps) {
           <div className='flex items-center ml-auto shrink-0'>
             <Button
               aria-label={
-                mounted && theme === 'dark'
-                  ? 'Switch to Light Mode'
-                  : 'Switch to Dark Mode'
+                mounted && theme === "dark"
+                  ? "Switch to Light Mode"
+                  : "Switch to Dark Mode"
               }
               className='text-content-secondary hover:text-content-primary'
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               size='icon'
               variant='ghost'
             >
-              {mounted && theme === 'dark' ? (
+              {mounted && theme === "dark" ? (
                 <SunIcon className='h-5 w-5' />
               ) : (
                 <MoonIcon className='h-5 w-5' />

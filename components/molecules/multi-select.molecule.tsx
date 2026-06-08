@@ -1,8 +1,8 @@
-import { CheckIcon, ChevronsUpDownIcon, XIcon } from 'lucide-react';
-import * as React from 'react';
+import { CheckIcon, ChevronsUpDownIcon, XIcon } from "lucide-react";
+import * as React from "react";
 
-import { Badge } from '@/components/atoms/badge.atom';
-import { Button } from '@/components/atoms/index.atoms';
+import { Badge } from "@/components/atoms/badge.atom";
+import { Button } from "@/components/atoms/index.atoms";
 import {
   Command,
   CommandEmpty,
@@ -10,13 +10,13 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/atoms/index.atoms';
+} from "@/components/atoms/index.atoms";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/atoms/index.atoms';
-import { cn } from '@/utils/cn.utils';
+} from "@/components/atoms/index.atoms";
+import { cn } from "@/utils/cn.utils";
 
 export type Option = {
   label: string;
@@ -34,10 +34,10 @@ interface MultiSelectProps {
 
 export function MultiSelect({
   className,
-  emptyText = 'No results found.',
+  emptyText = "No results found.",
   onChange,
   options,
-  placeholder = 'Select items...',
+  placeholder = "Select items...",
   selected,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
@@ -60,7 +60,7 @@ export function MultiSelect({
         <Button
           aria-expanded={open}
           className={cn(
-            'w-full justify-between h-auto min-h-[38px] px-3 py-2',
+            "w-full justify-between h-auto min-h-[38px] px-3 py-2",
             className
           )}
           role='combobox'
@@ -90,7 +90,7 @@ export function MultiSelect({
                       handleUnselect(itemValue);
                     }}
                     onKeyDown={e => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         handleUnselect(itemValue);
                       }
                     }}
@@ -127,10 +127,10 @@ export function MultiSelect({
                 >
                   <CheckIcon
                     className={cn(
-                      'mr-2 h-4 w-4',
+                      "mr-2 h-4 w-4",
                       selected.includes(option.value)
-                        ? 'opacity-100'
-                        : 'opacity-0'
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
                   {option.label}

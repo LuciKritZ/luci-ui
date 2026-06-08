@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { Project, ProjectState } from '@/types/project.types';
+import { Project, ProjectState } from "@/types/project.types";
 
 interface ProjectContextType extends ProjectState {
   addVersion: (projectId: string, code: string) => Promise<void>;
@@ -22,25 +22,25 @@ interface ProjectContextType extends ProjectState {
   wizardStep: WizardStep;
 }
 
-type WizardStep = 'build' | 'idea' | 'iterate' | 'theme';
+type WizardStep = "build" | "idea" | "iterate" | "theme";
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProject, setCurrentProject] = useState<null | Project>(null);
-  const [wizardStep, setWizardStep] = useState<WizardStep>('idea');
+  const [wizardStep, setWizardStep] = useState<WizardStep>("idea");
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('/api/projects');
+      const response = await fetch("/api/projects");
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
       }
     } catch (error) {
-      console.error('Failed to fetch projects:', error);
+      console.error("Failed to fetch projects:", error);
     } finally {
       setIsLoading(false);
     }
@@ -65,13 +65,13 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       versions: [],
     };
 
-    const response = await fetch('/api/projects', {
+    const response = await fetch("/api/projects", {
       body: JSON.stringify(newProject),
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     });
 
-    if (!response.ok) throw new Error('Failed to create project');
+    if (!response.ok) throw new Error("Failed to create project");
 
     const savedProject = await response.json();
     setProjects(prev => [savedProject, ...prev]);
@@ -92,10 +92,10 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch(`/api/projects/${id}`, {
         body: JSON.stringify(updatedData),
-        headers: { 'Content-Type': 'application/json' },
-        method: 'PATCH',
+        headers: { "Content-Type": "application/json" },
+        method: "PATCH",
       });
-      if (!response.ok) throw new Error('Failed to update project');
+      if (!response.ok) throw new Error("Failed to update project");
     } catch (error) {
       console.error(error);
       // Revert could be implemented here
@@ -111,9 +111,9 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const response = await fetch(`/api/projects/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      if (!response.ok) throw new Error('Failed to delete project');
+      if (!response.ok) throw new Error("Failed to delete project");
     } catch (error) {
       console.error(error);
     }
@@ -172,7 +172,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 export function useProject() {
   const context = useContext(ProjectContext);
   if (context === undefined) {
-    throw new Error('useProject must be used within a ProjectProvider');
+    throw new Error("useProject must be used within a ProjectProvider");
   }
   return context;
 }

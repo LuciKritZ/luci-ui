@@ -1,9 +1,9 @@
-import { DashboardPreview } from '@/components/molecules/dashboard-preview.molecule';
-import { IDesignTheme } from '@/contexts/design.context';
+import { DashboardPreview } from "@/components/molecules/dashboard-preview.molecule";
+import { IDesignTheme } from "@/contexts/design.context";
 
 interface ThemePreviewCanvasProps {
   activePreviewTheme: IDesignTheme;
-  previewMode: 'dark' | 'light';
+  previewMode: "dark" | "light";
 }
 
 export function ThemePreviewCanvas({
@@ -20,18 +20,18 @@ export function ThemePreviewCanvas({
               backgroundColor:
                 activePreviewTheme.colors?.[previewMode]?.primary ||
                 activePreviewTheme.colors?.dark?.primary ||
-                '#18181b',
+                "#18181b",
               fontFamily: activePreviewTheme.fontDisplay,
             }}
           >
-            {activePreviewTheme.name?.[0] || 'T'}
+            {activePreviewTheme.name?.[0] || "T"}
           </div>
           <div>
             <h2 className='text-2xl font-display font-black tracking-tighter uppercase'>
               {activePreviewTheme.name}
             </h2>
             <p className='text-sm text-content-tertiary'>
-              {activePreviewTheme.description || 'Custom aesthetic system.'}
+              {activePreviewTheme.description || "Custom aesthetic system."}
             </p>
           </div>
         </div>

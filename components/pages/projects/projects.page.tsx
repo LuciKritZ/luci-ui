@@ -1,5 +1,5 @@
-import { HeaderManager } from '@/components/molecules/header-manager.molecule';
-import { Dashboard as ProjectsList } from '@/components/organisms/index.organisms';
+import { HeaderManager } from "@/components/molecules/header-manager.molecule";
+import { Dashboard as ProjectsList } from "@/components/organisms/index.organisms";
 
 export function ProjectsPage() {
   return (

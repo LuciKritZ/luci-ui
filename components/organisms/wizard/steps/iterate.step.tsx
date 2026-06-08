@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   BrainIcon,
@@ -7,36 +7,41 @@ import {
   RotateCcwIcon,
   SaveIcon,
   SparklesIcon,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
+  TrashIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { SideDrawer } from '@/components/organisms/index.organisms';
-import { useProject } from '@/contexts/project.context';
-import { useSettings } from '@/contexts/settings.context';
-import { useGenerator } from '@/hooks/index.hooks';
-import { cn } from '@/utils/index.utils';
+import { Button } from "@/components/atoms/index.atoms";
+import { SideDrawer } from "@/components/organisms/index.organisms";
+import { useProject } from "@/contexts/project.context";
+import { useSettings } from "@/contexts/settings.context";
+import { useGenerator } from "@/hooks/index.hooks";
+import { cn } from "@/utils/index.utils";
 
 export function IterateStep() {
   const router = useRouter();
-  const { addVersion, currentProject } = useProject();
+  const { addVersion, currentProject, updateProject } = useProject();
   const { isSettingsLoaded } = useSettings();
   const {
-    generateSession,
+    artifacts,
+    deleteArtifact,
+    generateArtifacts,
     isLoading,
-    sessions,
-    setCurrentSessionIndex,
-    setSessions,
-  } = useGenerator();
+    setArtifacts,
+  } = useGenerator(
+    currentProject?.id,
+    currentProject?.artifacts,
+    updateProject
+  );
 
   const [focusedArtifactIndex, setFocusedArtifactIndex] = useState<number>(0);
   const [drawerState, setDrawerState] = useState<{
     data: null | string;
     isOpen: boolean;
-    mode: 'code' | 'variations' | null;
+    mode: "code" | "variations" | null;
     title: string;
-  }>({ data: null, isOpen: false, mode: null, title: '' });
+  }>({ data: null, isOpen: false, mode: null, title: "" });
 
   const [savedArtifactIds, setSavedArtifactIds] = useState<Set<string>>(
     new Set()
@@ -48,51 +53,47 @@ export function IterateStep() {
     if (hasInitialized.current || !currentProject) return;
 
     if (currentProject.versions && currentProject.versions.length > 0) {
-      const recoveredSession = {
-        artifacts: currentProject.versions.map((code, index) => ({
-          html: code,
-          id: `artifact_${Date.now()}_${index}`,
-          status: 'complete' as const,
-          styleName: `Iteration ${index + 1}`,
-        })),
-        id: `session_${Date.now()}`,
-        prompt: currentProject.description || 'Recovered Project',
+      const recoveredArtifacts = currentProject.versions.map((code, index) => ({
+        html: code,
+        id: `artifact_${Date.now()}_${index}`,
+        prompt: currentProject.description || "Recovered Project",
+        status: "complete" as const,
+        styleName: `Iteration ${index + 1}`,
         timestamp: currentProject.lastEdited || Date.now(),
-      };
-      setSessions([recoveredSession]);
-      setCurrentSessionIndex(0);
+      }));
+      setArtifacts(recoveredArtifacts);
       setFocusedArtifactIndex(currentProject.versions.length - 1);
+      hasInitialized.current = true;
+    } else if (artifacts.length > 0) {
       hasInitialized.current = true;
     } else if (
       currentProject.description &&
-      sessions.length === 0 &&
+      artifacts.length === 0 &&
       !isLoading &&
       isSettingsLoaded
     ) {
       hasInitialized.current = true;
-      generateSession(
+      generateArtifacts(
         currentProject.description,
-        currentProject.theme || 'minimal'
+        currentProject.theme || "minimal"
       );
     }
   }, [
     currentProject,
-    generateSession,
-    setSessions,
-    setCurrentSessionIndex,
-    sessions.length,
+    generateArtifacts,
+    setArtifacts,
+    artifacts.length,
     isLoading,
     isSettingsLoaded,
   ]);
 
-  const allArtifacts = sessions.flatMap(s => s.artifacts);
-  const activeArtifact = allArtifacts[focusedArtifactIndex];
+  const activeArtifact = artifacts[focusedArtifactIndex];
 
   const handleSaveToProject = async (html: string, artifactId: string) => {
     if (!currentProject) return;
     await addVersion(currentProject.id, html);
     setSavedArtifactIds(prev => new Set(prev).add(artifactId));
-    router.push('/');
+    router.push("/");
   };
 
   const handleShowCode = () => {
@@ -100,8 +101,8 @@ export function IterateStep() {
       setDrawerState({
         data: activeArtifact.html,
         isOpen: true,
-        mode: 'code',
-        title: 'Source Code',
+        mode: "code",
+        title: "Source Code",
       });
     }
   };
@@ -113,11 +114,11 @@ export function IterateStep() {
         <div className='max-w-4xl mx-auto flex items-center justify-between'>
           <div>
             <h2 className='text-xl font-display font-black tracking-tighter uppercase text-white'>
-              {currentProject?.name || 'Generating Project'}
+              {currentProject?.name || "Generating Project"}
             </h2>
             <p className='text-sm text-content-tertiary mt-1 max-w-2xl truncate'>
               {currentProject?.description ||
-                'Your vision is coming to life...'}
+                "Your vision is coming to life..."}
             </p>
           </div>
         </div>
@@ -131,27 +132,27 @@ export function IterateStep() {
             Generated Designs
           </h3>
 
-          {allArtifacts.length === 0 && !isLoading && (
+          {artifacts.length === 0 && !isLoading && (
             <div className='text-center py-12 px-4 border-2 border-dashed border-border rounded-2xl'>
               <BrainIcon className='w-8 h-8 text-border mx-auto mb-4' />
               <p className='text-xs text-content-tertiary'>Awaiting ideas...</p>
             </div>
           )}
 
-          {allArtifacts.map((artifact, index) => {
+          {artifacts.map((artifact, index) => {
             const isSelected = focusedArtifactIndex === index;
-            const isBlurring = artifact.status === 'streaming';
+            const isBlurring = artifact.status === "streaming";
 
             return (
               <div
                 className={cn(
-                  'group relative p-4 rounded-2xl border transition-all',
+                  "group relative p-4 rounded-2xl border transition-all",
                   isBlurring
-                    ? 'opacity-70 cursor-wait'
-                    : 'cursor-pointer hover:border-content-tertiary/50',
+                    ? "opacity-70 cursor-wait"
+                    : "cursor-pointer hover:border-content-tertiary/50",
                   isSelected
-                    ? 'bg-brand/5 border-brand/50 ring-1 ring-brand/50'
-                    : 'bg-surface border-border'
+                    ? "bg-brand/5 border-brand/50 ring-1 ring-brand/50"
+                    : "bg-surface border-border"
                 )}
                 key={artifact.id}
                 onClick={() => !isBlurring && setFocusedArtifactIndex(index)}
@@ -166,56 +167,66 @@ export function IterateStep() {
                   {!isBlurring && savedArtifactIds.has(artifact.id) && (
                     <CheckIcon className='w-4 h-4 text-green-500 shrink-0' />
                   )}
+                  {!isBlurring && !savedArtifactIds.has(artifact.id) && (
+                    <button
+                      className='text-content-tertiary hover:text-red-500 transition-colors p-1'
+                      onClick={e => {
+                        e.stopPropagation();
+                        deleteArtifact(artifact.id);
+                        if (isSelected) setFocusedArtifactIndex(0);
+                      }}
+                      title='Delete Design'
+                    >
+                      <TrashIcon className='w-3 h-3' />
+                    </button>
+                  )}
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span
                     className={cn(
-                      'text-[10px] px-2 py-0.5 rounded-md font-medium',
+                      "text-[10px] px-2 py-0.5 rounded-md font-medium",
                       isBlurring
-                        ? 'bg-brand/20 text-brand animate-pulse'
-                        : 'bg-content-primary/5 text-content-secondary'
+                        ? "bg-brand/20 text-brand animate-pulse"
+                        : "bg-content-primary/5 text-content-secondary"
                     )}
                   >
                     {isBlurring
-                      ? 'Generating...'
-                      : artifact.status === 'error'
-                        ? 'Failed'
-                        : 'Complete'}
+                      ? "Generating..."
+                      : artifact.status === "error"
+                        ? "Failed"
+                        : "Complete"}
                   </span>
-                  {!isBlurring && (
-                    <span className='text-[10px] text-content-tertiary uppercase tracking-wider font-bold'>
-                      Iteration {index + 1}
-                    </span>
-                  )}
                 </div>
               </div>
             );
           })}
 
-          {allArtifacts.length > 0 && (
-            <Button
-              className='w-full mt-4 border-border px-4 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:text-white transition-all shrink-0'
-              disabled={isLoading}
-              onClick={() => {
-                if (currentProject?.description) {
-                  generateSession(
-                    currentProject.description,
-                    currentProject.theme || 'minimal'
-                  );
-                  setFocusedArtifactIndex(0);
-                }
-              }}
-              variant='outline'
-            >
-              {isLoading ? (
-                <RotateCcwIcon className='w-4 h-4 animate-spin' />
-              ) : (
-                <SparklesIcon className='w-4 h-4' />
-              )}
-              {isLoading ? 'Loading...' : 'Load More Designs'}
-            </Button>
-          )}
+          <Button
+            className='w-full mt-4 border-border px-4 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:text-white transition-all shrink-0'
+            disabled={isLoading}
+            onClick={() => {
+              if (currentProject?.description) {
+                generateArtifacts(
+                  currentProject.description,
+                  currentProject.theme || "minimal"
+                );
+                setFocusedArtifactIndex(0);
+              }
+            }}
+            variant='outline'
+          >
+            {isLoading ? (
+              <RotateCcwIcon className='w-4 h-4 animate-spin' />
+            ) : (
+              <SparklesIcon className='w-4 h-4' />
+            )}
+            {isLoading
+              ? "Loading..."
+              : artifacts.length === 0
+                ? "Generate Designs"
+                : "Load More Designs"}
+          </Button>
         </div>
 
         {/* Live Preview Canvas */}
@@ -232,8 +243,8 @@ export function IterateStep() {
               </div>
 
               {activeArtifact &&
-                !activeArtifact.status.includes('error') &&
-                activeArtifact.status !== 'streaming' && (
+                !activeArtifact.status.includes("error") &&
+                activeArtifact.status !== "streaming" && (
                   <div className='flex items-center gap-4'>
                     <Button
                       className='flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors'
@@ -260,17 +271,20 @@ export function IterateStep() {
             </div>
 
             <div className='relative group flex-1 bg-surface/50 rounded-2xl border border-border overflow-hidden min-h-[500px]'>
-              {activeArtifact?.status === 'streaming' ? (
+              {activeArtifact?.status === "streaming" ? (
                 <div className='absolute inset-0 flex flex-col items-center justify-center p-16 text-brand gap-4 bg-background'>
                   <BrainIcon className='w-12 h-12 animate-pulse' />
                   <span className='font-display font-bold tracking-widest uppercase text-sm text-center'>
                     Designing your variation...
                   </span>
                 </div>
-              ) : activeArtifact?.status === 'error' ? (
+              ) : activeArtifact?.status === "error" ? (
                 <div className='absolute inset-0 flex flex-col items-center justify-center p-16 text-red-500 gap-4 bg-background text-center'>
                   <span className='font-bold text-sm'>
                     {activeArtifact.styleName}
+                  </span>
+                  <span className='text-xs opacity-80'>
+                    {activeArtifact.html || "Generation failed"}
                   </span>
                 </div>
               ) : activeArtifact?.html ? (
@@ -295,7 +309,7 @@ export function IterateStep() {
         onClose={() => setDrawerState(s => ({ ...s, isOpen: false }))}
         title={drawerState.title}
       >
-        {drawerState.mode === 'code' && (
+        {drawerState.mode === "code" && (
           <pre className='p-4 bg-zinc-900 overflow-auto text-sm text-white h-full'>
             <code>{drawerState.data}</code>
           </pre>

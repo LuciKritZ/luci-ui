@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { ActivityIcon, BarChart3Icon, FolderIcon } from 'lucide-react';
+import { ActivityIcon, BarChart3Icon, FolderIcon } from "lucide-react";
 
-import { useProject } from '@/contexts/project.context';
+import { useProject } from "@/contexts/project.context";
 
-import { NoRecentActivity } from './no-recent-activity.analytics-dashboard';
-import { RecentActivityList } from './recent-activity-list.analytics-dashboard';
+import { NoRecentActivity } from "./no-recent-activity.analytics-dashboard";
+import { RecentActivityList } from "./recent-activity-list.analytics-dashboard";
 
 export function AnalyticsDashboard() {
   const { projects } = useProject();

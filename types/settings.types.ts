@@ -6,9 +6,10 @@ export interface Settings {
       hasKey: boolean;
       meta?: { description?: string };
       priority: number;
-      status: 'active' | 'exhausted';
+      status: "active" | "exhausted";
+      usageCount?: number;
     }[];
   };
   hasGeminiApiKey: boolean;
-  theme: 'dark' | 'light' | 'system';
+  theme: "dark" | "light" | "system";
 }

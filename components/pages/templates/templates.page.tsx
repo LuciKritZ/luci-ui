@@ -1,6 +1,6 @@
-import { LayoutTemplateIcon } from 'lucide-react';
+import { LayoutTemplateIcon } from "lucide-react";
 
-import { HeaderManager } from '@/components/molecules/header-manager.molecule';
+import { HeaderManager } from "@/components/molecules/header-manager.molecule";
 
 export function TemplatesPage() {
   return (

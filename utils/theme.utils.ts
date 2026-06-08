@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import Theme from '@/models/theme.model';
+import Theme from "@/models/theme.model";
 
 /**
  * Takes a theme ID (or string) and resolves it to a stringified JSON representation
@@ -9,7 +9,7 @@ import Theme from '@/models/theme.model';
 export async function getThemeString(
   themeId: string | undefined
 ): Promise<string> {
-  if (!themeId || themeId === 'minimal') return 'minimal';
+  if (!themeId || themeId === "minimal") return "minimal";
 
   if (mongoose.Types.ObjectId.isValid(themeId)) {
     try {
@@ -30,7 +30,7 @@ export async function getThemeString(
         );
       }
     } catch (e) {
-      console.error('Failed to fetch theme for AI prompt:', e);
+      console.error("Failed to fetch theme for AI prompt:", e);
     }
   }
 

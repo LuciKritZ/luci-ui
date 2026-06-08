@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { useAuth } from './auth.context';
+import { useAuth } from "./auth.context";
 
 export interface IDesignTheme {
   _id?: string;
-  animation: 'bouncy' | 'fluid' | 'minimal' | 'snappy';
+  animation: "bouncy" | "fluid" | "minimal" | "snappy";
   colors: {
     dark: {
       accent: string;
@@ -62,10 +62,10 @@ export interface IDesignTheme {
   id: string;
   name: string;
   radius: string;
-  shadows: 'glow' | 'none' | 'sharp' | 'soft';
+  shadows: "glow" | "none" | "sharp" | "soft";
   spacing: {
     base: string;
-    scale: 'comfortable' | 'compact' | 'loose';
+    scale: "comfortable" | "compact" | "loose";
   };
 }
 
@@ -77,7 +77,7 @@ interface DesignSystemContextType {
   isLoading: boolean;
   savedThemes: IDesignTheme[];
   saveTheme: (
-    theme: Omit<IDesignTheme, 'createdAt' | 'id'>
+    theme: Omit<IDesignTheme, "createdAt" | "id">
   ) => Promise<IDesignTheme>;
   searchQuery: string;
   setActivePreviewTheme: (theme: IDesignTheme | null) => void;
@@ -99,16 +99,16 @@ export function DesignSystemProvider({
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingThemes, setIsFetchingThemes] = useState(true);
   const [savedThemes, setSavedThemes] = useState<IDesignTheme[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchSavedThemes = async () => {
     try {
       setIsFetchingThemes(true);
-      const response = await fetch('/api/themes');
+      const response = await fetch("/api/themes");
       const data = await response.json();
       setSavedThemes(data);
     } catch (error) {
-      console.error('Failed to fetch themes:', error);
+      console.error("Failed to fetch themes:", error);
     } finally {
       setIsFetchingThemes(false);
     }
@@ -123,30 +123,33 @@ export function DesignSystemProvider({
   const generateThemes = async (prompt: string): Promise<IDesignTheme[]> => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/generate/themes', {
+      const response = await fetch("/api/generate/themes", {
         body: JSON.stringify({ prompt }),
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
       });
       const data = await response.json();
-      return data.themes;
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate themes");
+      }
+      return data.themes || [];
     } finally {
       setIsLoading(false);
     }
   };
 
   const saveTheme = async (
-    theme: Omit<IDesignTheme, 'createdAt' | 'id'>
+    theme: Omit<IDesignTheme, "createdAt" | "id">
   ): Promise<IDesignTheme> => {
-    const response = await fetch('/api/themes', {
+    const response = await fetch("/api/themes", {
       body: JSON.stringify(theme),
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to save theme');
+      throw new Error(errorData.error || "Failed to save theme");
     }
 
     const saved = await response.json();
@@ -157,7 +160,7 @@ export function DesignSystemProvider({
   const deleteTheme = async (id: string) => {
     try {
       const response = await fetch(`/api/themes/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (response.ok) {
         setSavedThemes(prev => prev.filter(t => t.id !== id && t._id !== id));
@@ -166,7 +169,7 @@ export function DesignSystemProvider({
         }
       }
     } catch (error) {
-      console.error('Delete theme error:', error);
+      console.error("Delete theme error:", error);
     }
   };
 
@@ -194,7 +197,7 @@ export function useDesignSystem() {
   const context = useContext(DesignSystemContext);
   if (context === undefined) {
     throw new Error(
-      'useDesignSystem must be used within a DesignSystemProvider'
+      "useDesignSystem must be used within a DesignSystemProvider"
     );
   }
   return context;

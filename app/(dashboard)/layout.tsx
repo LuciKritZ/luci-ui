@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
-import { MainLayoutTemplate } from '@/components/templates/index.templates';
-import { useAuth } from '@/contexts/auth.context';
-import { DesignSystemProvider } from '@/contexts/design.context';
-import { LayoutProvider } from '@/contexts/layout.context';
-import { ProjectProvider } from '@/contexts/project.context';
-import { SettingsProvider } from '@/contexts/settings.context';
+import { MainLayoutTemplate } from "@/components/templates/index.templates";
+import { useAuth } from "@/contexts/auth.context";
+import { DesignSystemProvider } from "@/contexts/design.context";
+import { LayoutProvider } from "@/contexts/layout.context";
+import { ProjectProvider } from "@/contexts/project.context";
+import { SettingsProvider } from "@/contexts/settings.context";
 
 export default function DashboardLayout({
   children,
@@ -20,7 +20,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [isAuthenticated, isAuthLoading, router]);
 

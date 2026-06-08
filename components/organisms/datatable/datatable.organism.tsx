@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   ColumnDef,
@@ -11,11 +11,11 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from '@tanstack/react-table';
-import { LayoutGridIcon, ListIcon, SearchIcon } from 'lucide-react';
-import * as React from 'react';
+} from "@tanstack/react-table";
+import { LayoutGridIcon, ListIcon, SearchIcon } from "lucide-react";
+import * as React from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
+import { Button } from "@/components/atoms/index.atoms";
 import {
   Table,
   TableBody,
@@ -23,22 +23,22 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/index.atoms';
+} from "@/components/atoms/index.atoms";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from '@/components/atoms/input-group.atom';
+} from "@/components/atoms/input-group.atom";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
-  onViewModeChange?: (mode: 'grid' | 'list') => void;
+  onViewModeChange?: (mode: "grid" | "list") => void;
   renderGridCard?: (data: TData) => React.ReactNode;
   searchKey: string;
   searchPlaceholder?: string;
-  viewMode?: 'grid' | 'list';
+  viewMode?: "grid" | "list";
 }
 
 export function DataTable<TData, TValue>({
@@ -48,8 +48,8 @@ export function DataTable<TData, TValue>({
   onViewModeChange,
   renderGridCard,
   searchKey,
-  searchPlaceholder = 'Search...',
-  viewMode = 'list',
+  searchPlaceholder = "Search...",
+  viewMode = "list",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -59,7 +59,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const [localViewMode, setLocalViewMode] = React.useState<'grid' | 'list'>(
+  const [localViewMode, setLocalViewMode] = React.useState<"grid" | "list">(
     viewMode
   );
 
@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
     setLocalViewMode(viewMode);
   }, [viewMode]);
 
-  const handleViewModeChange = (mode: 'grid' | 'list') => {
+  const handleViewModeChange = (mode: "grid" | "list") => {
     setLocalViewMode(mode);
     if (onViewModeChange) onViewModeChange(mode);
   };
@@ -106,7 +106,7 @@ export function DataTable<TData, TValue>({
               }
               placeholder={searchPlaceholder}
               value={
-                (table.getColumn(searchKey)?.getFilterValue() as string) ?? ''
+                (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
               }
             />
           </InputGroup>
@@ -116,7 +116,7 @@ export function DataTable<TData, TValue>({
             <div className='flex items-center border border-border rounded-md p-0.5 bg-muted/50'>
               <Button
                 className={`h-7 w-7 rounded-sm \${localViewMode === "list" ? "bg-background shadow-sm" : "hover:bg-background/50"}`}
-                onClick={() => handleViewModeChange('list')}
+                onClick={() => handleViewModeChange("list")}
                 size='icon'
                 variant='ghost'
               >
@@ -124,7 +124,7 @@ export function DataTable<TData, TValue>({
               </Button>
               <Button
                 className={`h-7 w-7 rounded-sm \${localViewMode === "grid" ? "bg-background shadow-sm" : "hover:bg-background/50"}`}
-                onClick={() => handleViewModeChange('grid')}
+                onClick={() => handleViewModeChange("grid")}
                 size='icon'
                 variant='ghost'
               >
@@ -158,7 +158,7 @@ export function DataTable<TData, TValue>({
           </div>
         )}
 
-        {localViewMode === 'list' || !renderGridCard ? (
+        {localViewMode === "list" || !renderGridCard ? (
           <div className='w-full overflow-auto'>
             <Table>
               <TableHeader>
@@ -183,7 +183,7 @@ export function DataTable<TData, TValue>({
                 {table.getRowModel().rows?.length
                   ? table.getRowModel().rows.map(row => (
                       <TableRow
-                        data-state={row.getIsSelected() && 'selected'}
+                        data-state={row.getIsSelected() && "selected"}
                         key={row.id}
                       >
                         {row.getVisibleCells().map(cell => (
@@ -220,7 +220,7 @@ export function DataTable<TData, TValue>({
 
       <div className='flex items-center justify-between space-x-2 py-2'>
         <div className='text-sm text-muted-foreground'>
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className='flex items-center space-x-2'>

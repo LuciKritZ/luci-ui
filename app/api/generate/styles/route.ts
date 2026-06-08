@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import User from '@/models/user.model';
-import dbConnect from '@/utils/db.utils';
+import User from "@/models/user.model";
+import dbConnect from "@/utils/db.utils";
 import {
   compilePrompt,
   executeWithFallback,
   getActionDefinition,
-} from '@/utils/genai.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
-import { enforceRateLimit } from '@/utils/ratelimit.utils';
-import { getThemeString } from '@/utils/theme.utils';
+} from "@/utils/genai.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
+import { enforceRateLimit } from "@/utils/ratelimit.utils";
+import { getThemeString } from "@/utils/theme.utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const rateLimitResponse = await enforceRateLimit(
       session.userId,
-      'generate-styles',
+      "generate-styles",
       10,
       60
     );
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     if (!prompt) {
       return NextResponse.json(
-        { error: 'Prompt is required' },
+        { error: "Prompt is required" },
         { status: 400 }
       );
     }
@@ -39,10 +39,10 @@ export async function POST(request: NextRequest) {
     const user = await User.findById(session.userId);
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const actionDef = await getActionDefinition('createStyles');
+    const actionDef = await getActionDefinition("createStyles");
 
     const result = await executeWithFallback(
       user,
@@ -54,9 +54,9 @@ export async function POST(request: NextRequest) {
         });
         return await genAI.models.generateContent({
           config: {
-            responseMimeType: 'application/json',
+            responseMimeType: "application/json",
           },
-          contents: [{ parts: [{ text: stylePrompt }], role: 'user' }],
+          contents: [{ parts: [{ text: stylePrompt }], role: "user" }],
           model: modelId,
         });
       },
@@ -64,39 +64,41 @@ export async function POST(request: NextRequest) {
       actionDef.fallbackModel
     );
 
-    const text = result.text ?? '';
+    const text = result.text ?? "";
     if (!text) {
       return NextResponse.json(
-        { error: 'AI returned no response' },
+        { error: "AI returned no response" },
         { status: 500 }
       );
     }
 
     let generatedStyles = [];
     try {
-      const jsonContent = text.replace(/```json\n?|```/g, '').trim();
+      const jsonContent = text.replace(/```json\n?|```/g, "").trim();
       generatedStyles = JSON.parse(jsonContent);
       if (!Array.isArray(generatedStyles) || generatedStyles.length < 3) {
-        throw new Error('Invalid array returned');
+        throw new Error("Invalid array returned");
       }
     } catch (parseError) {
       console.error(
-        'Failed to parse AI response for styles:',
+        "Failed to parse AI response for styles:",
         text,
         parseError
       );
       generatedStyles = [
-        'Primary Pigment Gridwork',
-        'Tactile Risograph Layering',
-        'Kinetic Silhouette Balance',
+        "Primary Pigment Gridwork",
+        "Tactile Risograph Layering",
+        "Kinetic Silhouette Balance",
       ];
     }
 
     return NextResponse.json({ styles: generatedStyles.slice(0, 3) });
   } catch (error) {
-    console.error('Style generation error:', error);
+    console.error("Style generation error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      {
+        error: error instanceof Error ? error.message : "Internal Server Error",
+      },
       { status: 500 }
     );
   }

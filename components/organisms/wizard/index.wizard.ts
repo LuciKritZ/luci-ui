@@ -1,1 +1,1 @@
-export { Wizard } from './wizard.organism';
+export { Wizard } from "./wizard.organism";

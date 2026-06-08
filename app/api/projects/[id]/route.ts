@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import Project from '@/models/project.model';
-import dbConnect from '@/utils/db.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import Project from "@/models/project.model";
+import dbConnect from "@/utils/db.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 export async function DELETE(
   request: NextRequest,
@@ -21,13 +21,13 @@ export async function DELETE(
       userId: session.userId,
     });
     if (!project) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json({ message: 'Project deleted successfully' });
+    return NextResponse.json({ message: "Project deleted successfully" });
   } catch (error) {
-    console.error('API delete project error:', error);
+    console.error("API delete project error:", error);
     return NextResponse.json(
-      { error: 'Failed to delete project' },
+      { error: "Failed to delete project" },
       { status: 500 }
     );
   }
@@ -50,18 +50,18 @@ export async function PATCH(
       { _id: id, userId: session.userId },
       body,
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     );
     if (!project) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
     return NextResponse.json(project);
   } catch (error) {
-    console.error('API update project error:', error);
+    console.error("API update project error:", error);
     return NextResponse.json(
-      { error: 'Failed to update project' },
+      { error: "Failed to update project" },
       { status: 500 }
     );
   }

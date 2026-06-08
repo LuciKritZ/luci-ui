@@ -1,13 +1,13 @@
-import { TrashIcon } from 'lucide-react';
+import { TrashIcon } from "lucide-react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { IDesignTheme, useDesignSystem } from '@/contexts/design.context';
-import { cn } from '@/utils/index.utils';
+import { Button } from "@/components/atoms/index.atoms";
+import { IDesignTheme, useDesignSystem } from "@/contexts/design.context";
+import { cn } from "@/utils/index.utils";
 
 interface ThemesListProps {
   activePreviewTheme: IDesignTheme | null;
   filteredThemes: IDesignTheme[];
-  previewMode: 'dark' | 'light';
+  previewMode: "dark" | "light";
   setActivePreviewTheme: (theme: IDesignTheme) => void;
 }
 
@@ -24,18 +24,18 @@ export function ThemesList({
       {filteredThemes.map(theme => {
         const colors = theme.colors?.[previewMode] || theme.colors?.dark;
         const currentColors = colors || {
-          accent: '#3b82f6',
-          background: '#ffffff',
-          primary: '#18181b',
-          surface: '#f9fafb',
+          accent: "#3b82f6",
+          background: "#ffffff",
+          primary: "#18181b",
+          surface: "#f9fafb",
         };
         return (
           <div
             className={cn(
-              'group p-4 rounded-2xl border transition-all cursor-pointer',
+              "group p-4 rounded-2xl border transition-all cursor-pointer",
               activePreviewTheme?.id === theme.id
-                ? 'bg-brand/5 border-brand/50 ring-1 ring-brand/50 shadow-xl shadow-brand/5'
-                : 'bg-surface border-border hover:border-content-tertiary/50'
+                ? "bg-brand/5 border-brand/50 ring-1 ring-brand/50 shadow-xl shadow-brand/5"
+                : "bg-surface border-border hover:border-content-tertiary/50"
             )}
             key={theme.id}
             onClick={() => setActivePreviewTheme(theme)}
@@ -52,7 +52,7 @@ export function ThemesList({
                   className='opacity-0 group-hover:opacity-100 transition-opacity text-content-tertiary hover:text-destructive hover:bg-destructive/10'
                   onClick={e => {
                     e.stopPropagation();
-                    deleteTheme(theme.id || theme._id || '');
+                    deleteTheme(theme.id || theme._id || "");
                   }}
                   size='icon-xs'
                   variant='ghost'

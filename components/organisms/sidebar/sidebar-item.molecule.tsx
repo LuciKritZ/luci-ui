@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import React, { useState } from 'react';
+import Link from "next/link";
+import React, { useState } from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
+import { Button } from "@/components/atoms/index.atoms";
 
 interface SidebarItemProps {
   active: boolean;
@@ -29,10 +29,10 @@ export function SidebarItem({
   const [hovered, setHovered] = useState(false);
 
   const getTextColor = () => {
-    if (danger) return hovered ? 'text-destructive' : 'text-content-secondary';
-    if (active) return 'text-brand';
-    if (hovered) return 'text-content-primary';
-    return 'text-content-secondary';
+    if (danger) return hovered ? "text-destructive" : "text-content-secondary";
+    if (active) return "text-brand";
+    if (hovered) return "text-content-primary";
+    return "text-content-secondary";
   };
 
   const content = (
@@ -47,7 +47,7 @@ export function SidebarItem({
       {expanded && (
         <span
           className={`text-[12px] font-display tracking-widest uppercase whitespace-nowrap overflow-hidden text-ellipsis relative z-10 transition-all duration-300
-            ${active ? 'font-bold' : 'font-medium'}`}
+            ${active ? "font-bold" : "font-medium"}`}
         >
           {label}
         </span>
@@ -56,14 +56,14 @@ export function SidebarItem({
   );
 
   const className = `w-full flex items-center gap-4 px-5 h-14 border-l-4 transition-all duration-300 overflow-hidden relative text-left
-    ${active ? 'border-brand bg-brand/5' : 'border-transparent'}
-    ${onClick || href ? 'cursor-pointer' : 'cursor-default'}
+    ${active ? "border-brand bg-brand/5" : "border-transparent"}
+    ${onClick || href ? "cursor-pointer" : "cursor-default"}
     ${getTextColor()}`;
 
   if (href) {
     return (
       <Link
-        aria-current={active ? 'page' : undefined}
+        aria-current={active ? "page" : undefined}
         className={className}
         href={href}
         id={id}
@@ -78,7 +78,7 @@ export function SidebarItem({
 
   return (
     <Button
-      aria-current={active ? 'page' : undefined}
+      aria-current={active ? "page" : undefined}
       className={className}
       disabled={!onClick}
       id={id}

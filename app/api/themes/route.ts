@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-import Theme from '@/models/theme.model';
-import dbConnect from '@/utils/db.utils';
-import { getSession, unauthorizedResponse } from '@/utils/jwt.utils';
+import Theme from "@/models/theme.model";
+import dbConnect from "@/utils/db.utils";
+import { getSession, unauthorizedResponse } from "@/utils/jwt.utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,9 +18,9 @@ export async function GET(request: NextRequest) {
     });
     return NextResponse.json(themes);
   } catch (error) {
-    console.error('Fetch themes error:', error);
+    console.error("Fetch themes error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newTheme);
   } catch (error) {
-    console.error('Save theme error:', error);
+    console.error("Save theme error:", error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

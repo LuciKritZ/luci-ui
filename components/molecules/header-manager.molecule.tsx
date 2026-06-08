@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import { useLayout } from '@/contexts/layout.context';
+import { useLayout } from "@/contexts/layout.context";
 
 interface HeaderManagerProps {
   actions?: React.ReactNode;
@@ -18,7 +18,7 @@ export function HeaderManager({ actions, title }: HeaderManagerProps) {
 
     // Clean up when leaving the page
     return () => {
-      setHeaderTitle('');
+      setHeaderTitle("");
       setHeaderActions(null);
     };
   }, [title, actions, setHeaderTitle, setHeaderActions]);

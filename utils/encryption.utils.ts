@@ -1,24 +1,24 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
-const ALGORITHM = 'aes-256-gcm';
+const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16;
 const ENCRYPTION_KEY =
-  process.env.ENCRYPTION_KEY || 'default-key-at-least-32-chars-long!!';
+  process.env.ENCRYPTION_KEY || "default-key-at-least-32-chars-long!!";
 
 /**
  * Decrypts an AES-256-GCM encrypted string.
  */
 export function decrypt(encryptedText: string, ivHex: string) {
   const key = getEncryptionKey();
-  const iv = Buffer.from(ivHex, 'hex');
-  const authTag = Buffer.from(encryptedText.slice(-32), 'hex');
+  const iv = Buffer.from(ivHex, "hex");
+  const authTag = Buffer.from(encryptedText.slice(-32), "hex");
   const encrypted = encryptedText.slice(0, -32);
 
   const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
   decipher.setAuthTag(authTag);
 
-  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
+  let decrypted = decipher.update(encrypted, "hex", "utf8");
+  decrypted += decipher.final("utf8");
 
   return decrypted;
 }
@@ -32,14 +32,14 @@ export function encrypt(text: string) {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
-  let encrypted = cipher.update(text, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
 
-  const authTag = cipher.getAuthTag().toString('hex');
+  const authTag = cipher.getAuthTag().toString("hex");
 
   return {
     encryptedText: encrypted + authTag,
-    iv: iv.toString('hex'),
+    iv: iv.toString("hex"),
   };
 }
 

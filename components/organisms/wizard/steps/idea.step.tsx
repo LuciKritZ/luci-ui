@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import { SparklesIcon } from 'lucide-react';
-import { useState } from 'react';
+import { SparklesIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { useProject } from '@/contexts/project.context';
+import { Button } from "@/components/atoms/index.atoms";
+import { useProject } from "@/contexts/project.context";
 
 export function IdeaStep() {
   const {
@@ -14,23 +15,27 @@ export function IdeaStep() {
     setWizardStep,
     updateProject,
   } = useProject();
-  const [idea, setIdea] = useState(currentProject?.description || '');
+  const router = useRouter();
+  const [idea, setIdea] = useState(currentProject?.description || "");
   const [isSaving, setIsSaving] = useState(false);
 
   const handleNext = async () => {
     setIsSaving(true);
     try {
-      if (currentProject?.id && !currentProject.id.startsWith('proj_')) {
+      if (currentProject?.id && !currentProject.id.startsWith("proj_")) {
         await updateProject(currentProject.id, { description: idea });
       } else {
         const name =
-          idea.split(' ').slice(0, 3).join(' ') || 'Untitled Project';
-        const project = await createProject(name, idea, 'minimal');
+          idea.split(" ").slice(0, 3).join(" ") || "Untitled Project";
+        const project = await createProject(name, idea, "minimal");
         setCurrentProject(project);
+        setWizardStep("theme");
+        router.push(`/project/${project.id}`);
+        return; // Avoid calling setWizardStep again below
       }
-      setWizardStep('theme');
+      setWizardStep("theme");
     } catch (error) {
-      console.error('Failed to save project:', error);
+      console.error("Failed to save project:", error);
     } finally {
       setIsSaving(false);
     }
@@ -65,7 +70,7 @@ export function IdeaStep() {
             ) : (
               <SparklesIcon className='w-4 h-4 mr-2' />
             )}
-            {isSaving ? 'Saving...' : 'Generate Themes'}
+            {isSaving ? "Saving..." : "Generate Themes"}
           </Button>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-import RateLimit from '@/models/rate-limit.model';
-import dbConnect from '@/utils/db.utils';
+import RateLimit from "@/models/rate-limit.model";
+import dbConnect from "@/utils/db.utils";
 
 /**
  * Checks if the user has exceeded their rate limit for a specific action.
@@ -22,25 +22,43 @@ export async function enforceRateLimit(
 
   const identifier = `${userId}_${action}`;
 
-  // Find the rate limit document or create it if it doesn't exist.
-  // The $setOnInsert sets resetAt only on creation.
-  const rateLimitDoc = await RateLimit.findOneAndUpdate(
-    { identifier },
-    {
-      $inc: { count: 1 },
-      $setOnInsert: {
-        resetAt: new Date(Date.now() + windowSeconds * 1000),
+  let rateLimitDoc;
+  try {
+    // Find the rate limit document or create it if it doesn't exist.
+    // The $setOnInsert sets resetAt only on creation.
+    rateLimitDoc = await RateLimit.findOneAndUpdate(
+      { identifier },
+      {
+        $inc: { count: 1 },
+        $setOnInsert: {
+          resetAt: new Date(Date.now() + windowSeconds * 1000),
+        },
       },
-    },
-    { new: true, upsert: true }
-  );
+      { returnDocument: "after", upsert: true }
+    );
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code: number }).code === 11000
+    ) {
+      rateLimitDoc = await RateLimit.findOneAndUpdate(
+        { identifier },
+        { $inc: { count: 1 } },
+        { returnDocument: "after" }
+      );
+    } else {
+      throw error;
+    }
+  }
 
-  if (rateLimitDoc.count > limit) {
+  if (rateLimitDoc && rateLimitDoc.count > limit) {
     return NextResponse.json(
-      { error: 'Too many requests. Please wait before trying again.' },
+      { error: "Too many requests. Please wait before trying again." },
       {
         headers: {
-          'Retry-After': Math.ceil(
+          "Retry-After": Math.ceil(
             (rateLimitDoc.resetAt.getTime() - Date.now()) / 1000
           ).toString(),
         },

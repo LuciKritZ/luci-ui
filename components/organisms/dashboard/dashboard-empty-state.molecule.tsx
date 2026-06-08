@@ -1,12 +1,14 @@
-'use client';
+"use client";
 
-import { FolderPlusIcon } from 'lucide-react';
+import { FolderPlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import { Button } from '@/components/atoms/index.atoms';
-import { useProject } from '@/contexts/project.context';
+import { Button } from "@/components/atoms/index.atoms";
+import { useProject } from "@/contexts/project.context";
 
 export function DashboardEmptyState() {
   const { setWizardStep } = useProject();
+  const router = useRouter();
 
   return (
     <div className='flex flex-col items-center justify-center py-24 px-8 bg-surface border border-border brand-border relative overflow-hidden max-w-3xl mx-auto'>
@@ -24,7 +26,10 @@ export function DashboardEmptyState() {
         </p>
         <Button
           className='bg-brand text-white hover:bg-brand/90 h-12 px-8 rounded-none font-display font-bold uppercase tracking-[0.1em] text-xs transition-colors'
-          onClick={() => setWizardStep('idea')}
+          onClick={() => {
+            setWizardStep("idea");
+            router.push("/new");
+          }}
         >
           Start Building
         </Button>

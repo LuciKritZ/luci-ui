@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { PencilIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import { PencilIcon } from "lucide-react";
+import React, { useState } from "react";
 
 import {
   Select,
@@ -9,8 +9,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/index.atoms';
-import { cn } from '@/utils/index.utils';
+} from "@/components/atoms/index.atoms";
+import { cn } from "@/utils/index.utils";
 
 interface EditableSelectProps {
   className?: string;
@@ -61,7 +61,7 @@ export function EditableSelect({
 
   return (
     <div
-      className={cn('group flex items-center gap-2 cursor-pointer', className)}
+      className={cn("group flex items-center gap-2 cursor-pointer", className)}
       onClick={() => setIsEditing(true)}
     >
       <span className='truncate'>{selectedOption?.label || value}</span>

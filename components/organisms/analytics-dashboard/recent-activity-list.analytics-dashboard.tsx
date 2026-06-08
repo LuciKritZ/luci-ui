@@ -1,4 +1,4 @@
-import { Project } from '@/types/project.types';
+import { Project } from "@/types/project.types";
 
 interface RecentActivityListProps {
   recentProjects: Project[];

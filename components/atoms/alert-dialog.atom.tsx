@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
-import * as React from 'react';
+import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
+import * as React from "react";
 
-import { cn } from '@/utils/cn.utils';
+import { cn } from "@/utils/cn.utils";
 
-import { Button } from './button.atom';
+import { Button } from "./button.atom";
 
 function AlertDialog({
   ...props
@@ -15,10 +15,10 @@ function AlertDialog({
 
 function AlertDialogAction({
   className,
-  size = 'default',
-  variant = 'default',
+  size = "default",
+  variant = "default",
   ...props
-}: Pick<React.ComponentProps<typeof Button>, 'size' | 'variant'> &
+}: Pick<React.ComponentProps<typeof Button>, "size" | "variant"> &
   React.ComponentProps<typeof AlertDialogPrimitive.Action>) {
   return (
     <Button asChild size={size} variant={variant}>
@@ -33,10 +33,10 @@ function AlertDialogAction({
 
 function AlertDialogCancel({
   className,
-  size = 'default',
-  variant = 'outline',
+  size = "default",
+  variant = "outline",
   ...props
-}: Pick<React.ComponentProps<typeof Button>, 'size' | 'variant'> &
+}: Pick<React.ComponentProps<typeof Button>, "size" | "variant"> &
   React.ComponentProps<typeof AlertDialogPrimitive.Cancel>) {
   return (
     <Button asChild size={size} variant={variant}>
@@ -51,17 +51,17 @@ function AlertDialogCancel({
 
 function AlertDialogContent({
   className,
-  size = 'default',
+  size = "default",
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & {
-  size?: 'default' | 'sm';
+  size?: "default" | "sm";
 }) {
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         className={cn(
-          'group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl bg-popover p-6 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-lg data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl bg-popover p-6 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-lg data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         data-size={size}
@@ -79,7 +79,7 @@ function AlertDialogDescription({
   return (
     <AlertDialogPrimitive.Description
       className={cn(
-        'text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground',
+        "text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
         className
       )}
       data-slot='alert-dialog-description'
@@ -91,11 +91,11 @@ function AlertDialogDescription({
 function AlertDialogFooter({
   className,
   ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        'flex flex-col-reverse gap-2 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end',
+        "flex flex-col-reverse gap-2 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
         className
       )}
       data-slot='alert-dialog-footer'
@@ -107,11 +107,11 @@ function AlertDialogFooter({
 function AlertDialogHeader({
   className,
   ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        'grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-6 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]',
+        "grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-6 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
         className
       )}
       data-slot='alert-dialog-header'
@@ -123,7 +123,7 @@ function AlertDialogHeader({
 function AlertDialogMedia({
   className,
   ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
@@ -143,7 +143,7 @@ function AlertDialogOverlay({
   return (
     <AlertDialogPrimitive.Overlay
       className={cn(
-        'fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
+        "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       data-slot='alert-dialog-overlay'
@@ -167,7 +167,7 @@ function AlertDialogTitle({
   return (
     <AlertDialogPrimitive.Title
       className={cn(
-        'text-lg font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2',
+        "text-lg font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
         className
       )}
       data-slot='alert-dialog-title'

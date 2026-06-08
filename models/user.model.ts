@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
-import { clearModelIfLocal } from '@/utils/db.utils';
+import { clearModelIfLocal } from "@/utils/db.utils";
 
 export interface IApiKey {
   _id?: string;
@@ -9,7 +9,8 @@ export interface IApiKey {
   iv: string;
   meta?: { description?: string };
   priority: number;
-  status: 'active' | 'exhausted';
+  status: "active" | "exhausted";
+  usageCount?: number;
 }
 
 export interface IUser extends Document {
@@ -29,7 +30,8 @@ const ApiKeySchema = new Schema({
     description: { type: String },
   },
   priority: { default: 1, type: Number },
-  status: { default: 'active', enum: ['active', 'exhausted'], type: String },
+  status: { default: "active", enum: ["active", "exhausted"], type: String },
+  usageCount: { default: 0, type: Number },
 });
 
 const UserSchema: Schema = new Schema(
@@ -49,7 +51,7 @@ const UserSchema: Schema = new Schema(
 );
 
 // Add transformation to rename _id to id and remove sensitive fields
-UserSchema.set('toJSON', {
+UserSchema.set("toJSON", {
   transform: (_doc, ret: Record<string, unknown>) => {
     const r = ret as Record<string, unknown> & {
       __v?: number;
@@ -69,12 +71,12 @@ UserSchema.set('toJSON', {
     // We also remove the raw encrypted keys from the user object sent to client
     if (
       r.apiKeys &&
-      typeof r.apiKeys === 'object' &&
+      typeof r.apiKeys === "object" &&
       !(r.apiKeys instanceof Array)
     ) {
       const safeApiKeys: Record<
         string,
-        Array<Omit<IApiKey, 'encryptedKey' | 'iv'> & { hasKey: boolean }>
+        Array<Omit<IApiKey, "encryptedKey" | "iv"> & { hasKey: boolean }>
       > = {};
       for (const [provider, keys] of Object.entries(
         r.apiKeys as Record<string, IApiKey[]>
@@ -87,6 +89,7 @@ UserSchema.set('toJSON', {
             meta: key.meta,
             priority: key.priority,
             status: key.status,
+            usageCount: key.usageCount || 0,
           }));
         }
       }
@@ -98,7 +101,7 @@ UserSchema.set('toJSON', {
 });
 
 // Use the centralized helper to handle hot reloading in local environment
-clearModelIfLocal('User');
+clearModelIfLocal("User");
 
 export default mongoose.models.User ||
-  mongoose.model<IUser>('User', UserSchema);
+  mongoose.model<IUser>("User", UserSchema);
