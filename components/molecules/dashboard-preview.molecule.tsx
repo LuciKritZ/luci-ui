@@ -536,13 +536,16 @@ export function DashboardPreview({
             min-width: 14px;
             border: 1.5px solid var(--preview-border);
             border-radius: calc(var(--preview-radius) * 0.5);
-            background-color: var(--preview-input);
+            background: transparent !important;
+            color: transparent;
+            margin: 0;
+            padding: 0;
             cursor: pointer;
             position: relative;
             transition: all 0.15s ease;
           }
           .preview-checkbox:checked {
-            background-color: var(--preview-primary);
+            background: var(--preview-primary) !important;
             border-color: var(--preview-primary);
           }
           .preview-checkbox:checked::after {

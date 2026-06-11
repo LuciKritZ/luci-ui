@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   mongodb:
     image: mongo:latest
@@ -12,6 +10,19 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password123
       - MONGO_INITDB_DATABASE=luci-ui
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: luci-ui-web
+    network_mode: "host"
+    env_file:
+      - .env.local
+      - .env
+    depends_on:
+      - mongodb
 
 volumes:
   mongodb_data:
