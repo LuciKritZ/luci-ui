@@ -74,3 +74,16 @@ npm run dev
 ```
 
 Visit `http://localhost:9000` to log in with the admin user you just created.
+
+## Run with Docker
+
+You can easily run the entire stack (MongoDB and the Next.js app) using Docker Compose.
+
+1. Configure your `.env.local` as described above.
+2. Build and start the containers:
+
+```bash
+docker compose up --build -d
+```
+
+The application will be available at `http://localhost:9000`.
