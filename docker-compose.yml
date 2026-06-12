@@ -15,9 +15,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      network: host
     container_name: luci-ui-web
-    network_mode: "host"
+    ports:
+      - "9000:9000"
     env_file:
       - .env.local
       - .env
