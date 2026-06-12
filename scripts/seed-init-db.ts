@@ -25,28 +25,28 @@ const SEED_USER = {
 // -------------------------------------------------------------
 const INITIAL_ACTIONS = [
   {
-    fallbackModel: "gemini-3.5-flash",
+    fallbackModel: "gemini-flash-lite-latest",
     model: "gemini-3-flash-preview",
     name: "createTheme",
     prompt:
       "You are an expert UI/UX designer. Create a beautiful, modern, and cohesive color theme based on the following request: {{prompt}}\n\nProvide exactly 3 distinct themes. Each theme must be a valid JSON object matching the `ITheme` interface structure. Output ONLY a valid JSON array of these 3 objects. Do not include markdown formatting or explanations.",
   },
   {
-    fallbackModel: "gemini-3.5-flash",
+    fallbackModel: "gemini-flash-lite-latest",
     model: "gemini-3-flash-preview",
     name: "createThemeVariations",
     prompt:
       "You are an expert UI/UX designer. Based on this existing theme:\n{{theme}}\n\nGenerate exactly 3 variations of this theme incorporating the following request: {{prompt}}\n\nThe variations should maintain the core identity but introduce meaningful changes based on the request. Output ONLY a valid JSON array of 3 theme objects matching the `ITheme` interface. Do not include markdown formatting or explanations.",
   },
   {
-    fallbackModel: "gemini-3.5-flash",
+    fallbackModel: "gemini-flash-lite-latest",
     model: "gemini-3-flash-preview",
     name: "createStyles",
     prompt:
       'You are an expert UI/UX designer specializing in modern web aesthetics.\nGiven the following theme:\n{{theme}}\n\nAnd the user request: {{prompt}}\n\nGenerate exactly 3 distinct, creative style names that capture the essence of the theme and request (e.g., "Neon Cyberpunk", "Minimalist Zen", "Brutalist Corporate").\nOutput ONLY a valid JSON array of these 3 strings. Do not include markdown formatting or explanations.',
   },
   {
-    fallbackModel: "gemini-3.5-flash",
+    fallbackModel: "gemini-flash-lite-latest",
     model: "gemini-3-flash-preview",
     name: "createThemeArtifacts",
     prompt:

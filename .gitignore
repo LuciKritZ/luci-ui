@@ -39,3 +39,6 @@ lerna-debug.log*
 
 # Env variables
 .env*
+
+# Local deployment scripts
+.scripts/
